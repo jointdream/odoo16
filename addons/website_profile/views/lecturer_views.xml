@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data>
+    <!-- Sub nav -->
+    <template id="lecturer_sub_nav" name="Lecturer profile subnav">
+        <div class="o_wprofile_all_users_nav">
+            <div class="container">
+                <div class="row align-items-center justify-content-between">
+                    <!-- Desktop Mode -->
+                    <nav aria-label="breadcrumb" class="col d-none d-md-flex">
+                        <ol class="breadcrumb bg-transparent mb-0 ps-0 py-0">
+                            <li t-attf-class="breadcrumb-item #{'active' if not view_user else ''}">
+                                <a href="/profile/lecturers">Lecturers</a>
+                            </li>
+                            <li t-if="view_user" class="breadcrumb-item active">
+                                <a><t t-esc="view_user"/></a>
+                            </li>
+                        </ol>
+                    </nav>
+
+                    <div class="col d-none d-md-flex flex-row align-items-center justify-content-end">
+                        <!-- search -->
+                        <form t-attf-action="/profile/lecturers" role="search" method="get">
+                            <div class="input-group o_wprofile_course_nav_search ms-1 position-relative">
+                                <button class="btn btn-link text-white border-1 rounded-0 pe-1 me-2" type="submit" aria-label="Search" title="Search">
+                                    <i class="fa fa-search border-1"></i>
+                                </button>
+                                <input type="text" class="form-control border-0 rounded-0 bg-transparent text-white ms-auto" name="search" placeholder="Search Lecturer"/>
+                                <input type="hidden" name="group_by" t-att-value="group_by"/>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Mobile Mode -->
+                    <div class="col d-md-none py-1 o_wprofile_user_profile_sub_nav_mobile_col">
+                        <div class="btn-group w-100 position-relative" role="group" aria-label="Mobile sub-nav">
+                            <div class="btn-group w-100 ms-2">
+                                <a class="btn bg-black-25 text-white dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Nav</a>
+
+                                <ul class="dropdown-menu">
+                                    <a class="dropdown-item" t-att-href="home_url or '/'">Home</a>
+                                    <a class="dropdown-item" href="/profile/lecturers">&#9492; Lecturers</a>
+                                    <a t-if="view_user" class="dropdown-item">&#9492; <t t-esc="view_user"/></a>
+                                </ul>
+                            </div>
+
+                            <div class="btn-group ms-1 position-static me-2">
+                                <a class="btn bg-black-25 text-white dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-search"></i></a>
+                                <div class="dropdown-menu dropdown-menu-end w-100" style="right: 10px;">
+                                    <form class="px-3" t-attf-action="/profile/lecturers" role="search" method="get">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search" placeholder="Search Lecturer"/>
+                                            <button class="btn btn-primary" type="submit" aria-label="Search" title="Search">
+                                                <i class="fa fa-search"/>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!--
+    Single User Profile Page
+    -->
+
+    <!-- Edit Profile Page -->
+    <template id="user_profile_edit_main" name="Edit Profile">
+        <t t-set="body_classname" t-value="'o_wprofile_body'"/>
+        <t t-call="website.layout">
+            <div id="wrap" class="o_wprofile_wrap">
+                <div class="container pt-4 pb-5">
+                    <t t-call="website_profile.user_profile_edit_content"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="user_profile_edit_content" name="Edit Profile">
+        <h1 class="o_page_header">Edit Profile</h1>
+        <div>
+            <form t-attf-action="/profile/user/save" method="post" role="form" class="o_wprofile_editor_form js_website_submit_form row" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input type="file" class="d-none o_forum_file_upload" name="ufile" accept="image/*"/>
+                <input type="hidden" name="url_param" t-att-value="request.params.get('url_param')"/>
+                <div class="col-3">
+                    <div class="card o_card_people">
+                        <div class="card-body">
+                            <img class="o_forum_avatar_img w-100 mb-3" t-att-src="website.image_url(user, 'avatar_128')"/>
+                            <div class="text-center">
+                                <a href="#" class="o_forum_profile_pic_edit btn btn-primary" aria-label="Edit">
+                                    <i class="fa fa-pencil fa-1g float-sm-none float-md-start" title="Edit"></i>
+                                </a>
+                                <a href="#" title="Clear" aria-label="Clear" class="btn border-primary o_forum_profile_pic_clear">
+                                    <i class="fa fa-trash-o float-sm-none float-md-end"></i>
+                                </a>
+                            </div>
+                            <div class="my-3 mb-0 pt-2 border-top">
+                                <label class="text-primary" for="user_website_published" t-if="user.id == uid"><span class="fw-bold">Public profile</span></label>
+                                <div class=" mb-0 float-end" t-if="user.id == uid">
+                                    <input type="checkbox" class="mt8" name="website_published" id="user_website_published" value="True" t-if="not user.website_published"/>
+                                    <input type="checkbox" class="mt8" name="website_published" id="user_website_published" value="True" checked="checked" t-if="user.website_published"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-9 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <input name="user_id" t-att-value="user.id" type="hidden"/>
+                                <div class="mb-3 col-12">
+                                    <label class="text-primary mb-1 d-block" for="user_name"><span class="fw-bold">Name</span></label>
+                                    <div>
+                                        <input type="text" class="form-control" name="name" id="user_name" required="True" t-attf-value="#{user.name}"/>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 col-6">
+                                    <label class="mb-1 text-primary" for="user_website"><span class="fw-bold">Website</span></label>
+                                    <div>
+                                        <input type="text" class="form-control" name="website" id="user_website" t-attf-value="#{user.partner_id.website or ''}"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-6">
+                                    <div t-if="email_required" class="alert alert-danger alert-dismissable oe_email_required" role="alert">
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        <p>Please enter a valid email address in order to receive notifications from answers or comments.</p>
+                                    </div>
+                                    <label class="mb-1 text-primary" for="user_email"><span class="fw-bold">Email</span></label>
+                                    <div>
+                                        <input type="text" class="form-control" name="email" id="user_email" required="True" t-attf-value="#{user.partner_id.email}"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-6">
+                                    <label class="mb-1 text-primary" for="user_city"><span class="fw-bold">City</span></label>
+                                    <div>
+                                        <input type="text" class="form-control" name="city" id="user_city" t-attf-value="#{user.partner_id.city or ''}"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-6">
+                                    <label class="mb-1 text-primary"><span class="fw-bold">Country</span></label>
+                                    <div>
+                                        <select class="form-select" name="country">
+                                            <option value="">Country...</option>
+                                            <t t-foreach="countries or []" t-as="country">
+                                                <option t-att-value="country.id" t-att-selected="country.id == user.partner_id.country_id.id"><t t-esc="country.name"/></option>
+                                            </t>
+                                         </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-12">
+                                    <label class="mb-1 text-primary" for="description"><span class="fw-bold">Biography</span></label>
+                                    <textarea name="description" id="description" style="min-height: 120px"
+                                        class="form-control o_wysiwyg_loader"><t t-esc="user.partner_id.website_description"/></textarea>
+                                </div>
+                                <div class="col">
+                                    <button type="submit" class="btn btn-primary o_wprofile_submit_btn">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </template>
+
+    <!-- 讲师详情页 -->
+    <template id="lecturer_info_main" name="Lecutrer Info Page">
+        <t t-set="body_classname" t-value="'o_wprofile_body'"/>
+        <t t-call="website.layout">
+            <div id="wrap" class="o_wprofile_wrap mt-0">
+                <t t-call="website_profile.lecturer_info_header"/>
+                <t t-call="website_profile.lecturer_info_content"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="lecturer_info_header" name="Lecutrer Page Header">
+        <div class="o_wprofile_header o_wprofile_gradient position-relative text-white">
+            <t t-call="website_profile.lecturer_sub_nav">
+                <t t-set="view_user"><t t-esc="user.name"/></t>
+            </t>
+
+            <div class="container pb-3 pb-md-0 pt-2 pt-md-5">
+                <div class="row">
+                    <!-- ==== Header Left ==== -->
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div t-attf-class="d-flex align-items-start h-100 #{'justify-content-between' if (request.env.user == user) else 'justify-content-around' }">
+                            <div class="o_wprofile_pict d-inline-block mb-3 mb-md-0" t-attf-style="background-image: url(#{website.image_url(user, 'avatar_1024')});"/>
+                            <a class="btn btn-primary d-inline-block d-md-none"
+                                t-if="request.env.user == user and user.karma != 0"
+                                t-attf-href="/profile/edit?url_param=#{edit_button_url_param}&amp;user_id=#{user.id}">
+                                <i class="fa fa-pencil me-1"/>EDIT
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- ==== Header Right ==== -->
+                    <div class="col-12 col-md-8 col-lg-9 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h1 class="o_card_people_name">
+                                <span t-field="user.name"/><small t-if="user.karma == 0"> (not verified)</small>
+                            </h1>
+                            <a class="btn btn-primary d-none d-md-inline-block" t-if="request.env.user == user and user.karma != 0 or request.env.user._is_admin()" t-attf-href="/profile/edit?url_param=#{edit_button_url_param}&amp;user_id=#{user.id}">
+                                <i class="fa fa-pencil me-2"/>EDIT PROFILE
+                            </a>
+                        </div>
+
+                        <div class="d-flex flex-column justify-content-center flex-grow-1 mb-0 mb-md-5">
+                            <div t-if="user.partner_id.company_name" class="lead mb-2">
+                                <i class="fa fa-building-o fa-fw me-1"/><span t-field="user.partner_id.company_name"/>
+                            </div>
+                            <div t-if="user.city or user.country_id" class="lead mb-2">
+                                <i class="fa fa-map-marker fa-fw me-1"/>
+                                <span t-field="user.city"/><span class="text-nowrap ms-1" t-if="user.country_id">(<span t-field="user.country_id"/>)</span>
+                            </div>
+                            <div t-if="user.website" class="lead mb-2">
+                                <i class="fa fa-globe fa-fw me-1"/><span t-field="user.website"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="lecturer_info_content" name="Lecturer Page Content">
+        <div class="container">
+            <div class="row">
+
+                <!-- ========== SIDEBAR ========== -->
+                <div class="col-12 col-md-4 col-lg-3 mt-3 mt-md-0">
+                    <div class="o_wprofile_sidebar bg-white px-3 py-2 py-md-3 mb-3 mb-md-5">
+                        <div class="collapse d-md-block" id="o_wprofile_sidebar_collapse">
+                            <table class="table table-sm w-100" id="o_wprofile_sidebar_table">
+                                <tbody>
+                                    <tr>
+                                        <th><small class="fw-bold">加入时间</small></th>
+                                        <td><span t-field="user.create_date" t-options='{"format": "d MMM Y"}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <th><small class="fw-bold">课程数</small></th>
+                                        <td t-if="user.badge_ids" t-esc="len(user.badge_ids.filtered(lambda b: b.badge_id.website_published))"/>
+                                        <td t-else="">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== PROFILE CONTENT ========== -->
+                <div class="col-12 col-md-8 col-lg-9 position-relative">
+                    <ul class="nav nav-tabs o_wprofile_nav_tabs flex-nowrap" role="tablist" id="profile_extra_info_tablist">
+                        <li class="nav-item">
+                            <a role="tab" aria-controls="about" href="#profile_tab_content_about" t-attf-class="nav-link #{'active' if not active_tab or active_tab == 'about' else ''}" data-bs-toggle="tab">About</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content py-4 o_wprofile_tabs_content mb-4" id="profile_extra_info_tabcontent">
+                        <div role="tabpanel" t-attf-class="tab-pane #{ 'show active' if not active_tab or active_tab == 'about' else '' }" id="profile_tab_content_about">
+                            <div class="o_wprofile_email_validation_container mb16 mt16">
+                                <t t-call="website_profile.email_validation_banner">
+                                    <t t-set="redirect_url" t-value="'/profile/user/%s' % user.id"/>
+                                    <t t-set="additional_validation_email_message"/>
+                                </t>
+                            </div>
+                            <div class="mb32">
+                                <h4>讲师简介</h4>
+                                <span>这是一段讲师简介</span>
+                            </div>
+                            <div class="mb32">
+                                <h5 class="border-bottom pb-1">Lecturer Courses</h5>
+                                <t t-if="courses_ongoing" t-call="website_profile.display_lucturer_course">
+                                    <t t-set="courses" t-value="courses_ongoing"></t>
+                                </t>
+                                <p t-else="" class="text-muted">No lecturer courses yet!</p>
+                            </div>
+                            <div t-if="user.partner_id.website_description" class="mb32">
+                                <h5 class="border-bottom pb-1">Biography</h5>
+                                <span t-field="user.partner_id.website_description"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="display_lucturer_course">
+        <div class="row">
+            <div class="col-12 col-lg-6" t-foreach="courses" t-as="course">
+                <div class="card mb-2">
+                    <div class="card-body o_wprofile_slides_course_card_body p-0 d-flex"
+                        t-attf-onclick="location.href='/slides/#{slug(course.channel_id)}';">
+                        <div class="o_wslides_background_image ps-5 pe-4 rounded-start" t-attf-style="background-image: url(#{course.channel_id.website_background_image_url});"/>
+                        <div class="p-2 w-100">
+                            <h5 class="mt-0 mb-1" t-field="course.channel_id.name"/>
+
+                            <div class="overflow-hidden mb-1" style="height:24px">
+                                <t t-foreach="course.channel_id.tag_ids.filtered(lambda tag: tag.color)" t-as="tag">
+                                    <a t-att-href="'/slides/all/tag/%s' % slug(tag)" t-attf-class="badge o_wslides_channel_tag post_link #{'o_tag_color_'+str(tag.color)}" t-esc="tag.name"/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!--
+    My Lecturer Page
+    -->
+    <template id="lecturer_page_main" name="Lecturer Page">
+        <t t-set="body_classname" t-value="'o_wprofile_body'"/>
+        <t t-call="website.layout">
+            <div class="h-100 d-flex flex-column">
+                <div id="wrap" class="o_wprofile_wrap mt-0 pb-5 ">
+                    <t t-call="website_profile.lecturer_page_header"/>
+                    <t t-if="users">
+                        <t t-call="website_profile.lecturer_page_content"/>
+                    </t>
+                </div>
+                <t t-if="not users">
+                    <h2 class="text-black m-auto">No Lecturer Yet :(</h2>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="lecturer_page_header" name="Users Page Header">
+        <div class="o_wprofile_all_users_header o_wprofile_gradient pb-5">
+            <t t-call="website_profile.user_profile_sub_nav"/>
+            <div class="container">
+                <h1 class="py-4 text-white d-inline-block">Lecturer</h1>
+            </div>
+        </div>
+    </template>
+
+    <template id="lecturer_page_content">
+        <div class="o_wprofile_coaches_card_list container mb32 mt32 ">
+            <table class="table table-sm" t-if='users'>
+                <t t-foreach="users" t-as="user">
+                    <tr t-attf-onclick="location.href='/profile/user/#{user['id']}';" t-attf-class="o_wprofile_pointer bg-white #{user['id'] == user_id.id and 'o_wprofile_border_focus'}">
+                        <t t-call="website_profile.coach_item_card"></t>
+                    </tr>
+                </t>
+                <t t-if="my_user">
+                    <!-- keep same table to avoid missaligment -->
+                    <tr>
+                        <td colspan="7"></td>
+                    </tr>
+                    <t t-set='user' t-value='my_user'/>
+                    <tr t-attf-onclick="location.href='/profile/user/#{user['id']}';" t-attf-class="o_wprofile_pointer bg-white o_wprofile_border_focus">
+                        <t t-call="website_profile.coach_item_card">
+                        </t>
+                    </tr>
+                </t>
+            </table>
+            <t t-if='search and not users'>
+                <div class='alert alert-warning'>No user found for <strong><t t-esc="search"/></strong>. Try another search.</div>
+            </t>
+            <div class="d-flex justify-content-center">
+                <t t-call="website_profile.pager_nobox"/>
+            </div>
+        </div>
+    </template>
+
+    <template id="lecturer_item_card" name="Lecturer Card">
+        <div class="o_wprofile_coaches_card card text-center mb-2 border-bottom-0 o_wprofile_pointer"  t-attf-onclick="location.href='/profile/user/#{user['id']}';">
+            <div class="card-body">
+                <img class="avatar rounded-circle img-fluid"
+                        style="width: 128px; height: 128px; object-fit: cover;"
+                         t-att-src="'/profile/avatar/%s?field=avatar_256%s' % (user['id'], '&amp;res_model=%s&amp;res_id=%s' % (record._name, record.id) if record else '')"/>
+                <div class="user-info" >
+                    <h3 class="mt-2 mb-0" t-esc="user['name']"></h3>
+                    <span>San Francisco, CA</span>
+                    <a href="mailto:example@example.com">example@example.com</a>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</data></odoo>

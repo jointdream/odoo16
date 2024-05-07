@@ -92,6 +92,16 @@ class WebsiteProfile(http.Controller):
         params = self._prepare_user_profile_parameters(**post)
         values.update(self._prepare_user_profile_values(user, **params))
         return request.render("website_profile.user_profile_main", values)
+    
+    @http.route(['/profile/lecturer/<int:user_id>'], type='http', auth="public", website=True)
+    def view_lecturer(self, user_id, **post):
+        user = self._check_user_profile_access(user_id)
+        if not user:
+            return request.render("website_profile.private_profile")
+        values = self._prepare_user_values(**post)
+        params = self._prepare_user_profile_parameters(**post)
+        values.update(self._prepare_user_profile_values(user, **params))
+        return request.render("website_profile.lecturer_info_main", values)
 
     # Edit Profile
     # ---------------------------------------------------

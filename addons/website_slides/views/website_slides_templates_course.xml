@@ -233,7 +233,7 @@
                                     </div>
                                     <!-- 讲师名称 -->
                                     <div class="o_wslides_coach_card">
-                                        <div class="info_content">
+                                        <div class="info_content cursor-pointer" t-attf-onclick="location.href='/profile/lecturer/#{user['id']}';">
                                             <t t-call="website_slides.slides_misc_user_image">
                                                 <t t-set="img_class" t-value="'rounded-circle me-1'"/>
                                                 <t t-set="img_style" t-value="'width: 60px; height: 60px; object-fit: cover;'"/>

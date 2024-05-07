@@ -15,7 +15,8 @@
         'data/mail_template_data.xml',
         'views/gamification_badge_views.xml',
         'views/website_profile.xml',
-        'views/my_coaches_views.xml',
+        'views/lecturer_views.xml',
+        'views/coach_view.xml',
         'security/ir.model.access.csv',
     ],
     'assets': {

@@ -261,6 +261,11 @@ $line-height-truncate: 1.25em;
     opacity: 0.5;
 }
 
+// 课程卡片描述
+.o_wslides_course_card_desc {
+    margin-top: 5px;
+}
+
 // New course page
 // **************************************************
 
@@ -441,6 +446,61 @@ $line-height-truncate: 1.25em;
                     }
                 }
             }
+        }
+    }
+
+    .o_wslides_desc_card {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        background-color: white;
+        border-radius: 5px;
+        flex-wrap: wrap;
+        box-sizing: border-box;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);  /* 卡片阴影效果 */
+
+        .o_wslides_desc {
+            flex: 0 0 50%;
+            font-size: var(--body-font-size);
+            font-weight: var(--body-font-weight);
+            line-height: var(--body-line-height);
+            box-sizing: border-box;
+            line-height: 1.3;
+        }
+    }
+
+    // 讲师简介
+    .o_wslides_coach_card {
+        margin-top: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        background-color: white;
+        border-radius: 5px;
+        flex-wrap: wrap;
+        box-sizing: border-box;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);  /* 卡片阴影效果 */
+
+        .info_content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 0.5rem;
+
+            .title {
+                margin-left: 0.5rem;
+                font-size: 20px;
+                font-weight: bold;
+            }
+        }
+
+        span {
+            font-size: var(--body-font-size);
+            font-weight: var(--body-font-weight);
+            line-height: var(--body-line-height);
+            box-sizing: border-box;
         }
     }
 

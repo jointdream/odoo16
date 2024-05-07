@@ -255,3 +255,27 @@ $owprofile-color-bg: mix($body-bg, #efeff4);
 .o_wprofile_border_focus {
     border-left: 4px solid map-get($theme-colors, 'secondary');
 }
+
+.o_wprofile_coaches_card_list {
+    display: flex;
+    flex-wrap: wrap;
+    
+    .o_wprofile_coaches_card {
+        flex: 1 1 calc(33% - 10px);
+        box-sizing: border-box;
+        margin: 5px;
+        padding: 10px;
+
+        .card-body {
+            display: flex;
+            width: 100%;
+            align-items: center;
+
+            .user-info {
+                display: flex;
+                flex-direction: column;
+                margin-left: 10px;
+            }
+        }
+    }
+}

@@ -95,6 +95,15 @@ $owprofile-color-bg: mix($body-bg, #efeff4);
     }
 }
 
+.auto-wrap {
+    pre {
+        font-size: 16px;
+        word-wrap: break-word;
+        white-space: normal;
+        word-break: break-all;
+    }
+}
+
 /// Progress Circle
 .o_wprofile_progress_circle {
     position: relative;

@@ -192,11 +192,11 @@
                     <div class="col-12 col-md-4 col-lg-3">
                         <div t-attf-class="d-flex align-items-start h-100 #{'justify-content-between' if (request.env.user == user) else 'justify-content-around' }">
                             <div class="o_wprofile_pict d-inline-block mb-3 mb-md-0" t-attf-style="background-image: url(#{website.image_url(user, 'avatar_1024')});"/>
-                            <a class="btn btn-primary d-inline-block d-md-none"
-                                t-if="request.env.user == user and user.karma != 0"
-                                t-attf-href="/profile/edit?url_param=#{edit_button_url_param}&amp;user_id=#{user.id}">
-                                <i class="fa fa-pencil me-1"/>EDIT
-                            </a>
+<!--                            <a class="btn btn-primary d-inline-block d-md-none"-->
+<!--                                t-if="request.env.user == user and user.karma != 0"-->
+<!--                                t-attf-href="/profile/edit?url_param=#{edit_button_url_param}&amp;user_id=#{user.id}">-->
+<!--                                <i class="fa fa-pencil me-1"/>EDIT-->
+<!--                            </a>-->
                         </div>
                     </div>
 
@@ -206,9 +206,9 @@
                             <h1 class="o_card_people_name">
                                 <span t-field="user.name"/><small t-if="user.karma == 0"> (not verified)</small>
                             </h1>
-                            <a class="btn btn-primary d-none d-md-inline-block" t-if="request.env.user == user and user.karma != 0 or request.env.user._is_admin()" t-attf-href="/profile/edit?url_param=#{edit_button_url_param}&amp;user_id=#{user.id}">
-                                <i class="fa fa-pencil me-2"/>EDIT PROFILE
-                            </a>
+<!--                            <a class="btn btn-primary d-none d-md-inline-block" t-if="request.env.user == user and user.karma != 0 or request.env.user._is_admin()" t-attf-href="/profile/edit?url_param=#{edit_button_url_param}&amp;user_id=#{user.id}">-->
+<!--                                <i class="fa fa-pencil me-2"/>EDIT PROFILE-->
+<!--                            </a>-->
                         </div>
 
                         <div class="d-flex flex-column justify-content-center flex-grow-1 mb-0 mb-md-5">
@@ -270,8 +270,8 @@
                                 </t>
                             </div>
                             <div class="mb32">
-                                <h4>讲师简介</h4>
-                                <span>这是一段讲师简介</span>
+                                <h4>Lecture Description</h4>
+                                <span class="auto-wrap" t-field="user.partner_id.lecture_description" />
                             </div>
                             <div class="mb32">
                                 <h5 class="border-bottom pb-1">Lecturer Courses</h5>

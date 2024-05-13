@@ -209,7 +209,6 @@
                                     </div>
                                     <!-- 课程概要 -->
                                     <div class="o_wslides_desc_card">
-                                        <div class="o_wslides_desc">课程类型: 收费精品课程</div>
                                         <div class="o_wslides_desc">
                                             上课方式: 
                                             <span class="badge o_wslides_channel_tag o_tag_color_1" t-if="channel.is_live">Live Video</span>
@@ -217,19 +216,15 @@
                                             <span class="badge o_wslides_channel_tag o_tag_color_3" t-if="channel.is_online">Online Course</span>
                                             <span class="badge o_wslides_channel_tag o_tag_color_4" t-if="channel.is_video">Video Record</span>
                                         </div>
-                                        <div class="o_wslides_desc">内容类型: 投资</div>
                                         <div class="o_wslides_desc">
                                             开课日期: <span class="o_wslides_course_card_desc" t-esc="channel.start_time" />
                                         </div>
-                                        <div class="o_wslides_desc">上课时间: 每周四10:00</div>
                                         <div class="o_wslides_desc">
                                             结束日期: <span class="o_wslides_course_card_desc" t-esc="channel.end_time" />
                                         </div>
-                                        <div class="o_wslides_desc">适合人群: 初级经纪人</div>
                                         <div class="o_wslides_desc">
                                             报名截止日期: <span class="o_wslides_course_card_desc" t-esc="channel.reg_deadline" />
                                         </div>
-                                        <div class="o_wslides_desc">课程语言: 中文</div>
                                     </div>
                                     <!-- 讲师名称 -->
                                     <div class="o_wslides_coach_card">
@@ -240,7 +235,7 @@
                                             </t>
                                             <span class="title" t-esc="channel.user_id.display_name"/>
                                         </div>
-                                        <span>高级房地产经纪人、房地产投资与营销培训师。拥有超过15年的房地产行业经验，曾在国内外多家知名房地产公司担任高级经纪人及销售总监职位。他的专业领域涵盖房地产销售、市场分析、物业管理以及房地产投资策略。不仅在国内市场有着丰富的操作经验，也对国际房地产市场有深入的了解和实战经验。</span>
+                                        <span class="auto-wrap" t-field="channel.user_id.partner_id.lecture_description" />
                                     </div>
                                     <t t-if="channel.channel_type == 'training'" t-call="website_slides.course_slides_list"/>
                                     <t t-else="" t-call="website_slides.course_slides_cards"/>

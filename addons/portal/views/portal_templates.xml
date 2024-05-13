@@ -665,6 +665,9 @@
             <a href="/my/home" role="menuitem" class="dropdown-item ps-3">
                 <i class="fa fa-fw fa-id-card-o me-1 small text-muted"/> My Account
             </a>
+            <a href="/my/orders" role="menuitem" class="dropdown-item ps-3">
+                <i class="fa fa-fw fa-file-text-o me-1 small text-muted"/> My Orders
+            </a>
         </xpath>
     </template>
 

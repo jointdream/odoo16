@@ -404,8 +404,19 @@ img, .media_iframe_video, .o_image {
 
 form label {
     font-weight: $font-weight-bold;
+
+    &::before {
+        content: "*";
+        color: $danger;
+        margin-right: 0.2em;
+    }
+
     &.label-optional {
         font-weight: $font-weight-normal;
+    }
+
+    &.label-optional::before {
+        content: "";
     }
 }
 

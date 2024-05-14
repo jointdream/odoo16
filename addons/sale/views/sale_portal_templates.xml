@@ -71,7 +71,7 @@
         </t>
     </template>
 
-    <template id="portal_my_orders" name="My Sales Orders">
+    <template id="portal_my_orders" name="My Orders">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
@@ -79,31 +79,41 @@
                 <t t-set="title">Sales Orders</t>
             </t>
             <t t-if="orders" t-call="portal.portal_table">
-                <thead>
-                    <tr class="active">
-                        <th>
-                            <span class='d-none d-md-inline'>Sales Order #</span>
-                            <span class='d-block d-md-none'>Ref.</span>
-                        </th>
-                        <th class="text-end">Order Date</th>
-                        <th class="text-center"/>
-                        <th class="text-end">Total</th>
-                    </tr>
-                </thead>
                 <t t-foreach="orders" t-as="order">
-                    <tr>
-                        <td><a t-att-href="order.get_portal_url()"><t t-out="order.name"/></a></td>
-                        <td class="text-end">
-                            <span t-field="order.date_order" t-options="{'widget': 'date'}"/>&amp;nbsp;
-                            <span class='d-none d-md-inline' t-field="order.date_order" t-options="{'time_only': True}"/>
-                        </td>
-                        <td class="text-center">
-                            <span t-if="order.state == 'done'"  class="badge rounded-pill text-bg-success">
-                                <i class="fa fa-fw fa-check" role="img" aria-label="Done" title="Done"/>Done
-                            </span>
-                        </td>
-                        <td class="text-end"><span t-field="order.amount_total"/></td>
-                    </tr>
+                    <div class="order-card">
+                        <div class="card-header">
+                            <div class="left-content">
+                                <span class="order-date" t-field="order.date_order" t-options="{'widget': 'date'}" />
+                                <span class="order-number" t-field="order.name" />
+                            </div>
+                           <div class="right-content">
+<!--                                <span class="order-status" t-field="order.state" />-->
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="products">
+                                <t t-foreach="order.order_line" t-as="line">
+                                    <div class="product-item">
+                                        <img t-if="line.product_id.image_128" class="product-image" t-att-src="image_data_uri(line.product_id.image_128)" t-att-alt="line.name_short" />
+                                        <img t-else="" class="product-image" src="/web/image/product.product/1/image/1024" alt="product image" />
+                                        <div class="product-info">
+                                            <span class="product-name" t-field="line.name" />
+                                            <div>
+                                                <span t-field="line.product_uom_qty"/>
+                                                <span t-field="line.product_uom"/>
+                                            </div>
+                                            <span t-field="line.price_unit" />
+                                            <span t-out="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="details">
+                                <div class="total-amount">Total: <span t-field="order.amount_total" /></div>
+                                <a t-att-href="order.get_portal_url()">details</a>
+                            </div>
+                        </div>
+                    </div>
                 </t>
             </t>
             <p t-else="">There are currently no orders for your account.</p>

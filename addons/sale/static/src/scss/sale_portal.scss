@@ -40,3 +40,115 @@
         width: 100%;
     }
 }
+
+.order-card {
+    width: 100%;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+
+    .card-header {
+         display: flex;
+         flex-direction: row;
+         justify-content: space-between;
+         align-items: center;
+         padding: 0.5rem 1rem;
+         background-color: #f8f9fa;
+         border-bottom: 1px solid #e9ecef;
+         border-radius: 3px 3px 0 0;
+
+         .left-content {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             font-size: var(--body-font-size);
+
+            .order-number {
+                font-size: var(--body-font-size);
+                color: $o-brand-primary;
+            }
+
+            .order-date {
+                font-weight: 500;
+                margin-right: 1rem;
+            }
+         }
+
+        .right-content {
+            .order-status {
+                font-size: var(--body-font-size);
+                font-weight: 500;
+                margin-right: 0.5rem;
+            }
+        }
+     }
+
+    .card-body {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid #e9ecef;
+            width: 25%;
+
+            a {
+              color: $o-brand-primary;
+              text-decoration: $link-decoration;
+
+              &:hover {
+                color: $link-hover-color;
+                text-decoration: $link-hover-decoration;
+              }
+            }
+
+            .total-amount {
+                font-size: 1.25rem;
+                font-weight: 500;
+                margin-bottom: 1rem;
+            }
+        }
+
+        .products {
+            display: flex;
+            flex-direction: column;
+            width: 75%;
+
+            .product-item {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 0.5rem 0;
+                align-items: center;
+
+                .product-image {
+                    width: 50px;
+                    height: 50px;
+                    margin-right: 1rem;
+                }
+
+                .product-info {
+                    width: calc(100% - 50px);
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    padding-right: 2.5rem;
+
+                    .product-name {
+                        font-size: 1rem;
+                        font-weight: 500;
+                        width: 60%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+            }
+        }
+    }
+ }

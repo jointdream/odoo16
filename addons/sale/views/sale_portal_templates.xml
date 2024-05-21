@@ -84,10 +84,11 @@
                         <div class="card-header">
                             <div class="left-content">
                                 <span class="order-date" t-field="order.date_order" t-options="{'widget': 'date'}" />
-                                <span class="order-number" t-field="order.name" />
+                                <a t-att-href="order.get_portal_url()" t-field="order.name" />
                             </div>
                            <div class="right-content">
-<!--                                <span class="order-status" t-field="order.state" />-->
+                               <t t-set="finaltext" t-value="order.payment_state+' '+order.shipping_state"/>
+                               <span class="order-status" t-esc="finaltext" t-field="" />
                             </div>
                         </div>
                         <div class="card-body">

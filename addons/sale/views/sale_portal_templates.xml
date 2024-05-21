@@ -87,8 +87,8 @@
                                 <a t-att-href="order.get_portal_url()" t-field="order.name" />
                             </div>
                            <div class="right-content">
-                               <t t-set="finaltext" t-value="order.payment_state+' '+order.shipping_state"/>
-                               <span class="order-status" t-esc="finaltext" />
+<!--                                <t t-set="finaltext" t-value="order.payment_state+' '+order.shipping_state"/>-->
+<!--                                <span class="order-status" t-esc="finaltext" />-->
                             </div>
                         </div>
                         <div class="card-body">

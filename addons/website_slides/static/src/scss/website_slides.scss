@@ -269,6 +269,22 @@ $line-height-truncate: 1.25em;
 // New course page
 // **************************************************
 
+@media (min-width: 768px) {
+    .o_wslides_course_sidebar_fixed {
+        position: fixed;
+        top: 58px;
+        left: 1.1rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .o_wslides_course_sidebar_fixed {
+        position: fixed;
+        top: 58px;
+        left: 1.5rem;
+    }
+}
+
 .o_wslides_course_sidebar {
     border: 1px solid $border-color;
 

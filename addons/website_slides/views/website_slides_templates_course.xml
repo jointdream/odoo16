@@ -268,7 +268,6 @@
 <template id="course_sidebar" name="Course Sidebar (infos, CTA)">
     <!-- Channel sidebar (aka general information + CTAs) -->
     <div class="o_wslides_course_sidebar bg-white px-3 py-2 py-md-3 mb-3 mb-md-5">
-
         <div class="o_wslides_sidebar_top d-flex justify-content-between">
             <t t-call="website_slides.course_join"/>
             <button t-attf-class="btn d-md-none bg-white ms-1 border #{'alert' if channel.is_member else ''} #{'align-self-start' if channel.is_member or channel.enroll == 'invite' else 'align-self-end'}" type="button" data-bs-toggle="collapse" data-bs-target="#o_wslides_sidebar_collapse" aria-expanded="false" aria-controls="o_wslides_sidebar_collapse">More info</button>

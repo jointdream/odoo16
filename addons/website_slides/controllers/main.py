@@ -344,6 +344,8 @@ class WebsiteSlides(WebsiteProfile):
             ('karma', '>', 0),
             ('website_published', '=', True)], limit=5, order='karma desc'))
 
+        website_config = tools.lazy(lambda: request.env['website'].get_current_website())
+
         render_values = self._slide_render_context_base()
         render_values.update(self._prepare_user_values(**post))
         render_values.update({
@@ -358,6 +360,7 @@ class WebsiteSlides(WebsiteProfile):
             'search_tags': request.env['slide.channel.tag'],
             'slide_query_url': QueryURL('/slides/all', ['tag']),
             'slugify_tags': self._slugify_tags,
+            'website_config': website_config,
         })
 
         return request.render('website_slides.courses_home', render_values)
@@ -546,6 +549,8 @@ class WebsiteSlides(WebsiteProfile):
                     'access_error_content_name': request.params.get('access_error_slide_name'),
                 })
 
+        website_config = tools.lazy(lambda: request.env['website'].get_current_website())
+
         render_values = self._slide_render_context_base()
         render_values.update({
             'channel': channel,
@@ -564,6 +569,7 @@ class WebsiteSlides(WebsiteProfile):
             'pager': pager,
             # display upload modal
             'enable_slide_upload': kw.get('enable_slide_upload', False),
+            'website_config': website_config,
             ** errors,
             ** self._slide_channel_prepare_review_values(channel),
         })

@@ -395,6 +395,76 @@ $line-height-truncate: 1.25em;
     }
 }
 
+// 课程顾问悬浮按钮
+.course_consultant_float_button {
+    position: fixed;
+    right: 60px;
+    bottom: 60px;
+    z-index: 9999;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+    &:hover {
+         box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+
+        #course_consultant_toast_wrapper {
+            display: flex;
+            opacity: 1;
+        }
+    }
+
+    #fixed_button {
+        height: 100%;
+        width: 100%;
+        border-radius: 50%;
+        border: none;
+        font-size: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #course_consultant_toast_wrapper {
+        position: absolute;
+        bottom: 73px;
+        left: -20px;
+        width: 100px;
+        height: 160px;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        border-radius: 3px;
+        opacity: 0;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+
+        &::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            border-width: 10px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.6) transparent transparent transparent;
+        }
+
+        img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 5px;
+        }
+
+        span {
+            color: white;
+            font-size: 12px;
+            width: 80px;
+        }
+    }
+}
 
 .o_wslides_course_header {
     @include media-breakpoint-up(md)  {

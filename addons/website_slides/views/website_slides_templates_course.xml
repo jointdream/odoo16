@@ -255,6 +255,7 @@
                 </div>
             </div>
         </div>
+        <t t-call="website_slides.course_consultant_float_button"></t>
     </t>
 </template>
 

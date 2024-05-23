@@ -76,9 +76,10 @@
          }
 
         .right-content {
+            display: flex;
+            align-items: center;
+
             .order-status {
-                font-size: var(--body-font-size);
-                font-weight: 500;
                 margin-right: 0.5rem;
             }
         }

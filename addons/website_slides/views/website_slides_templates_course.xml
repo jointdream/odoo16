@@ -228,11 +228,11 @@
                                     </div>
                                     <!-- 讲师名称 -->
                                     <div class="o_wslides_coach_card">
-                                        <div class="info_content cursor-pointer" t-attf-onclick="location.href='/profile/lecturer/#{user['id']}';">
-                                            <t t-call="website_slides.slides_misc_user_image">
-                                                <t t-set="img_class" t-value="'rounded-circle me-1'"/>
-                                                <t t-set="img_style" t-value="'width: 60px; height: 60px; object-fit: cover;'"/>
-                                            </t>
+                                        <div class="info_content cursor-pointer" t-attf-onclick="location.href='/profile/lecturer/#{channel.user_id['id']}';">
+                                            <img t-att-class="img_class if img_class else 'rounded-circle float-start'"
+                                                 t-att-style="img_style if img_style else 'width: 32px; height: 32px; object-fit: cover;'"
+                                                 t-att-src="'/profile/avatar/%s?field=avatar_128' % channel.user_id.id"
+                                                 t-att-alt="channel.user_id.display_name"/>
                                             <span class="title" t-esc="channel.user_id.display_name"/>
                                         </div>
                                         <span class="auto-wrap" t-field="channel.user_id.partner_id.lecture_description" />
@@ -286,7 +286,7 @@
                 </tr>
                 <tr>
                     <th>Members</th>
-                    <td><t t-esc="channel.members_count"/></td>
+                    <td><t t-esc="channel.reg_count_display"/></td>
                 </tr>
             </table>
 

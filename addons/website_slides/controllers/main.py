@@ -382,7 +382,7 @@ class WebsiteSlides(WebsiteProfile):
         return request.render('website_slides.courses_home', render_values)
 
     @http.route(['/slides/all', '/slides/all/tag/<string:slug_tags>'], type='http', auth="public", website=True, sitemap=True)
-    def slides_channel_all(self, slide_category=None, slug_tags=None, my=False, **post):
+    def slides_channel_all(self, slide_category=None, slug_tags=None, my=False, newest=False, popular=False, **post):
         if slug_tags and request.httprequest.method == 'GET':
             # Redirect `tag-1,tag-2` to `tag-1` to disallow multi tags
             # in GET request for proper bot indexation;
@@ -391,12 +391,12 @@ class WebsiteSlides(WebsiteProfile):
             # request and so clearly it's not SEO bot.
             tag_list = slug_tags.split(',')
             if len(tag_list) > 1 and not post.get('search'):
-                url = QueryURL('/slides/all', ['tag'], tag=tag_list[0], my=my, slide_category=slide_category)()
+                url = QueryURL('/slides/all', ['tag'], tag=tag_list[0], my=my, newest=newest, popular=popular, slide_category=slide_category)()
                 return request.redirect(url, code=302)
-        render_values = self.slides_channel_all_values(slide_category=slide_category, slug_tags=slug_tags, my=my, **post)
+        render_values = self.slides_channel_all_values(slide_category=slide_category, slug_tags=slug_tags, my=my, newest=newest, popular=popular, **post)
         return request.render('website_slides.courses_all', render_values)
 
-    def slides_channel_all_values(self, slide_category=None, slug_tags=None, my=False, **post):
+    def slides_channel_all_values(self, slide_category=None, slug_tags=None, my=False, newest=False, popular=False, **post):
         """ Home page displaying a list of courses displayed according to some
         criterion and search terms.
 
@@ -419,6 +419,8 @@ class WebsiteSlides(WebsiteProfile):
             'displayImage': False,
             'allowFuzzy': not post.get('noFuzzy'),
             'my': my,
+            'newest': newest,
+            'popular': popular,
             'tag': slug_tags or post.get('tag'),
             'slide_category': slide_category,
         }
@@ -427,6 +429,18 @@ class WebsiteSlides(WebsiteProfile):
         search_count, details, fuzzy_search_term = request.website._search_with_fuzzy("slide_channels_only", search,
             limit=1000, order=order, options=options)
         channels = details[0].get('results', request.env['slide.channel'])
+
+        if my:
+            if not request.env.user._is_public():
+                # If a course is completed, we don't want to see it in first position but in last
+                channels = channels.filtered(lambda channel: channel.is_member).sorted(
+                    lambda channel: 0 if channel.completed else channel.completion, reverse=True)
+            else:
+                channels = request.env['slide.channel']
+        if newest:
+            channels = channels.sorted('create_date', reverse=True)
+        if popular:
+            channels = channels.sorted('total_votes', reverse=True)
 
         tag_groups = request.env['slide.channel.tag.group'].search(
             ['&', ('tag_ids', '!=', False), ('website_published', '=', True)])
@@ -446,6 +460,8 @@ class WebsiteSlides(WebsiteProfile):
             'original_search': fuzzy_search_term and search,
             'search_slide_category': slide_category,
             'search_my': my,
+            'search_newest': newest,
+            'search_popular': popular,
             'search_tags': search_tags,
             'search_count': search_count,
             'top3_users': self._get_top3_users(),
@@ -457,6 +473,11 @@ class WebsiteSlides(WebsiteProfile):
 
     def _prepare_additional_channel_values(self, values, **kwargs):
         return values
+
+    def _get_top3_users(self):
+        return request.env['res.users'].sudo().search_read([
+            ('karma', '>', 0),
+            ('website_published', '=', True)], ['id'], limit=3, order='karma desc')
 
     def _get_user_slide_authorization(self, slide_id):
         """ Get authorization status for the current user to access the given slide along with some data.

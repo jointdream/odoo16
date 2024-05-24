@@ -300,7 +300,7 @@ class WebsiteProfile(http.Controller):
                  '/profile/lecturers/page/<int:page>'], type='http', auth="public", website=True, sitemap=True)
     def view_all_lecturer_page(self, page=1, **kwargs):
         User = request.env['res.users']
-        dom = [('website_published', '=', True)]
+        dom = [('website_published', '=', True), ('partner_id.is_lecturer', '=', True)]
 
         # Searches
         search_term = kwargs.get('search')

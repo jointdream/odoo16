@@ -313,6 +313,19 @@ class WebsiteSlides(WebsiteProfile):
     # SLIDE.CHANNEL MAIN / SEARCH
     # --------------------------------------------------
 
+    def _get_channel_lecturer(self, channel):
+        seen_ids = set()
+        result = []
+
+        for item in channel:
+            if not item.user_id.website_published:
+                continue
+            if item.user_id.id not in seen_ids:
+                seen_ids.add(item.user_id.id)
+                result.append(item.user_id)
+
+        return result
+
     @http.route('/slides', type='http', auth="public", website=True, sitemap=True)
     def slides_channel_home(self, **post):
         """ Home page for eLearning platform. Is mainly a container page, does not allow search / filter. """
@@ -323,7 +336,10 @@ class WebsiteSlides(WebsiteProfile):
         else:
             channels_my = request.env['slide.channel']
         channels_popular = tools.lazy(lambda: channels_all.sorted('total_votes', reverse=True)[:3])
-        channels_newest = tools.lazy(lambda: channels_all.sorted('create_date', reverse=True)[:3])
+        channels_all_newest = tools.lazy(lambda: channels_all.sorted('create_date', reverse=True)[:3])
+        channels_newest = channels_all_newest[:3]
+
+        lecturers = self._get_channel_lecturer(channels_all_newest)[:3]
 
         achievements = tools.lazy(lambda: request.env['gamification.badge.user'].sudo().search([('badge_id.is_published', '=', True)], limit=5))
         if request.env.user._is_public():
@@ -354,7 +370,7 @@ class WebsiteSlides(WebsiteProfile):
             'channels_newest': channels_newest,
             'achievements': achievements,
             'users': users,
-            'top3_users': tools.lazy(self._get_top3_users),
+            'lecturers': lecturers,
             'challenges': challenges,
             'challenges_done': challenges_done,
             'search_tags': request.env['slide.channel.tag'],
@@ -441,11 +457,6 @@ class WebsiteSlides(WebsiteProfile):
 
     def _prepare_additional_channel_values(self, values, **kwargs):
         return values
-
-    def _get_top3_users(self):
-        return request.env['res.users'].sudo().search_read([
-            ('karma', '>', 0),
-            ('website_published', '=', True)], ['id'], limit=3, order='karma desc')
 
     def _get_user_slide_authorization(self, slide_id):
         """ Get authorization status for the current user to access the given slide along with some data.

@@ -455,35 +455,38 @@
     <xpath expr="//div[hasclass('o_wslides_home_aside')]" position="inside">
         <div class="row o_wslides_home_aside_title">
             <div class="col">
-                <a t-if="users" href="/profile/lecturers" class="float-end">View all</a>
+                <a t-if="lecturers" href="/profile/lecturers" class="float-end">View all</a>
                 <h5 class="m-0">Lecturers</h5>
                 <hr class="mt-2 mb-2"/>
             </div>
         </div>
         <div class="row">
-            <t t-if="users">
+            <t t-if="lecturers">
                 <div class="col">
                     <t t-set="counter" t-value="1"/>
-                    <t t-foreach="users" t-as="user">
-                        <t t-call="website_slides.user_quickkarma_card"/>
+                    <t t-foreach="lecturers" t-as="lecturer">
+                        <t t-call="website_slides.homepage_lecturer_item_card"/>
                         <t t-set="counter" t-value="counter + 1"/>
                     </t>
                 </div>
             </t>
-            <t t-else=""><p class="col mt8">当前没有我的导师 :(</p></t>
+            <t t-else=""><p class="col mt8">No Lecturer Yet :(</p></t>
         </div>
     </xpath>
 </template>
 
-<template id='user_quickkarma_card' name="User QuickKarma Card">
+<template id='homepage_lecturer_item_card' name="Lecturer Item Card">
     <div class="d-flex mb-3 align-items-center">
         <b class="me-2 text-muted" t-esc="counter"/>
-        <t t-call="website_slides.slides_misc_user_image"/>
+        <img t-att-class="img_class if img_class else 'rounded-circle float-start'"
+            t-att-style="img_style if img_style else 'width: 32px; height: 32px; object-fit: cover;'"
+            t-att-src="'/profile/avatar/%s?field=avatar_128' % lecturer.id"
+            t-att-alt="lecturer.name" />
         <div style="line-height:1.3">
-            <span class="fw-bold" t-esc="user.name"/>
+            <span class="fw-bold" t-esc="lecturer.name" />
             <div class="align-items-center">
-                <span>San Francisco, CA</span>
-                <a href="mailto:example@example.com">example@example.com</a>
+                <span t-esc="lecturer.address_id.state_id.name" />,
+                <span t-esc="lecturer.address_id.zip" />
             </div>
         </div>
     </div>

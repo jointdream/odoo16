@@ -397,38 +397,20 @@ class WebsiteSlides(WebsiteProfile):
         return request.render('website_slides.courses_all', render_values)
 
     def slides_channel_all_values(self, slide_category=None, slug_tags=None, my=False, newest=False, popular=False, **post):
-        """ Home page displaying a list of courses displayed according to some
-        criterion and search terms.
-
-          :param string slide_category: if provided, filter the course to contain at
-           least one slide of type 'slide_category'. Used notably to display courses
-           with certifications;
-          :param string slug_tags: if provided, filter the slide.channels having
-            the tag(s) (in comma separated slugified form);
-          :param bool my: if provided, filter the slide.channels for which the
-           current user is a member of
-          :param dict post: post parameters, including
-
-           * ``search``: filter on course description / name;
-        """
-        options = {
-            'displayDescription': True,
-            'displayDetail': False,
-            'displayExtraDetail': False,
-            'displayExtraLink': False,
-            'displayImage': False,
-            'allowFuzzy': not post.get('noFuzzy'),
-            'my': my,
-            'newest': newest,
-            'popular': popular,
-            'tag': slug_tags or post.get('tag'),
-            'slide_category': slide_category,
-        }
-        search = post.get('search')
+        search_term = post.get('search')
         order = self._channel_order_by_criterion.get(post.get('sorting'))
-        search_count, details, fuzzy_search_term = request.website._search_with_fuzzy("slide_channels_only", search,
-            limit=1000, order=order, options=options)
-        channels = details[0].get('results', request.env['slide.channel'])
+
+        channel = request.env['slide.channel']
+        dom = [('website_published', '=', True)]
+
+        if search_term:
+            dom = expression.AND([['|', ('name', 'ilike', search_term), ('user_id.name', 'ilike', search_term)], dom])
+
+        search_count = channel.sudo().search_count(dom)
+        if search_count:
+            channels = channel.sudo().search(dom, limit=1000, order=order)
+        else:
+            channels = []
 
         if my:
             if not request.env.user._is_public():
@@ -456,8 +438,7 @@ class WebsiteSlides(WebsiteProfile):
         render_values.update({
             'channels': channels,
             'tag_groups': tag_groups,
-            'search_term': fuzzy_search_term or search,
-            'original_search': fuzzy_search_term and search,
+            'search_term': search_term,
             'search_slide_category': slide_category,
             'search_my': my,
             'search_newest': newest,

@@ -1378,3 +1378,15 @@ class WebsiteSlides(WebsiteProfile):
         values.update(self._prepare_user_values(channel=channels[0] if len(channels) == 1 else True, **post))
         values.update(self._prepare_user_slides_profile(user))
         return values
+
+    def _prepare_lecture_values(self, user, **post):
+        values = super(WebsiteSlides, self)._prepare_user_profile_values(user, **post)
+        if post.get('channel_id'):
+            values.update({'edit_button_url_param': 'channel_id=' + str(post['channel_id'])})
+        channels = self._get_channels(**post)
+        if not channels:
+            channels = request.env['slide.channel'].search([])
+
+        values.update(self._prepare_user_values(channel=channels[0] if len(channels) == 1 else True, **post))
+        values.update(self._prepare_lecture_profile(user))
+        return values

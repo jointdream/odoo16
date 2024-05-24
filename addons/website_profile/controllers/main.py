@@ -67,6 +67,21 @@ class WebsiteProfile(http.Controller):
             'edit_button_url_param': '',
         }
 
+    def _prepare_lecture_profile(self, user):
+        courses = request.env['slide.channel'].sudo().search([('user_id', '=', user.id)])
+        courses_completed = courses.filtered(lambda c: c.completed)
+        courses_ongoing = courses - courses_completed
+        values = {
+            'uid': request.env.user.id,
+            'user': user,
+            'main_object': user,
+            'courses_completed': courses_completed,
+            'courses_ongoing': courses_ongoing,
+            'is_profile_page': True,
+            'badge_category': 'slides',
+        }
+        return values
+
     @http.route([
         '/profile/avatar/<int:user_id>',
     ], type='http', auth="public", website=True, sitemap=False)
@@ -100,7 +115,7 @@ class WebsiteProfile(http.Controller):
             return request.render("website_profile.private_profile")
         values = self._prepare_user_values(**post)
         params = self._prepare_user_profile_parameters(**post)
-        values.update(self._prepare_user_profile_values(user, **params))
+        values.update(self._prepare_lecture_values(user, **params))
         return request.render("website_profile.lecturer_info_main", values)
 
     # Edit Profile

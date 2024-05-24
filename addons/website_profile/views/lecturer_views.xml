@@ -245,7 +245,7 @@
                                     </tr>
                                     <tr>
                                         <th><small class="fw-bold">课程数</small></th>
-                                        <td t-if="user.badge_ids" t-esc="len(user.badge_ids.filtered(lambda b: b.badge_id.website_published))"/>
+                                        <td t-if="courses_ongoing" t-esc="len(courses_ongoing)"/>
                                         <td t-else="">0</td>
                                     </tr>
                                 </tbody>
@@ -275,7 +275,7 @@
                             </div>
                             <div class="mb32">
                                 <h5 class="border-bottom pb-1">Lecturer Courses</h5>
-                                <t t-if="courses_ongoing" t-call="website_profile.display_lucturer_course">
+                                <t t-if="courses_ongoing" t-call="website_profile.display_lecturer_course">
                                     <t t-set="courses" t-value="courses_ongoing"></t>
                                 </t>
                                 <p t-else="" class="text-muted">No lecturer courses yet!</p>
@@ -291,18 +291,18 @@
         </div>
     </template>
 
-    <template id="display_lucturer_course">
+    <template id="display_lecturer_course">
         <div class="row">
             <div class="col-12 col-lg-6" t-foreach="courses" t-as="course">
                 <div class="card mb-2">
                     <div class="card-body o_wprofile_slides_course_card_body p-0 d-flex"
-                        t-attf-onclick="location.href='/slides/#{slug(course.channel_id)}';">
-                        <div class="o_wslides_background_image ps-5 pe-4 rounded-start" t-attf-style="background-image: url(#{course.channel_id.website_background_image_url});"/>
+                        t-attf-onclick="location.href='/slides/#{course.id}';">
+                        <div class="o_wslides_background_image ps-5 pe-4 rounded-start" t-attf-style="background-image: url(#{course.website_background_image_url});"/>
                         <div class="p-2 w-100">
-                            <h5 class="mt-0 mb-1" t-field="course.channel_id.name"/>
+                            <h5 class="mt-0 mb-1" t-field="course.name"/>
 
                             <div class="overflow-hidden mb-1" style="height:24px">
-                                <t t-foreach="course.channel_id.tag_ids.filtered(lambda tag: tag.color)" t-as="tag">
+                                <t t-foreach="course.tag_ids.filtered(lambda tag: tag.color)" t-as="tag">
                                     <a t-att-href="'/slides/all/tag/%s' % slug(tag)" t-attf-class="badge o_wslides_channel_tag post_link #{'o_tag_color_'+str(tag.color)}" t-esc="tag.name"/>
                                 </t>
                             </div>

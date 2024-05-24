@@ -206,6 +206,20 @@ class WebsiteProfile(http.Controller):
             })
         return user_values
 
+    def _prepare_all_lectures_values(self, users):
+        user_values = []
+        for user in users:
+            user_values.append({
+                'id': user.id,
+                'name': user.name,
+                'city_name': user.address_id.city,
+                'state_name': user.address_id.state_id.name,
+                'lecture_description': user.partner_id.lecture_description,
+                'zip': user.address_id.zip,
+                'website_published': user.website_published
+            })
+        return user_values
+
     @http.route(['/profile/users',
                  '/profile/users/page/<int:page>'], type='http', auth="public", website=True, sitemap=True)
     def view_all_users_page(self, page=1, **kwargs):
@@ -266,12 +280,12 @@ class WebsiteProfile(http.Controller):
         })
         return request.render("website_profile.users_page_main", render_values)
     
-    # 我的导师
-    @http.route(['/profile/my_coach',
-                 '/profile/my_coach/page/<int:page>'], type='http', auth="public", website=True, sitemap=True)
-    def view_all_my_coach_page(self, page=1, **kwargs):
+    # 讲师列表
+    @http.route(['/profile/lecturers',
+                 '/profile/lecturers/page/<int:page>'], type='http', auth="public", website=True, sitemap=True)
+    def view_all_lecturer_page(self, page=1, **kwargs):
         User = request.env['res.users']
-        dom = [('karma', '>', 1), ('website_published', '=', True)]
+        dom = [('website_published', '=', True)]
 
         # Searches
         search_term = kwargs.get('search')
@@ -280,52 +294,45 @@ class WebsiteProfile(http.Controller):
             'search': search_term,
             'group_by': group_by or 'all',
         }
+
         if search_term:
-            dom = expression.AND([['|', ('name', 'ilike', search_term), ('partner_id.commercial_company_name', 'ilike', search_term)], dom])
+            dom = expression.AND([
+                ['|', '|', '|',
+                 ('name', 'ilike', search_term),
+                 ('address_id.city', 'ilike', search_term),
+                 ('address_id.state_id.name', 'ilike', search_term),
+                 ('address_id.zip', 'ilike', search_term),
+                 ], dom
+            ])
 
         user_count = User.sudo().search_count(dom)
         my_user = request.env.user
         current_user_values = False
         if user_count:
             page_count = math.ceil(user_count / self._users_per_page)
-            pager = request.website.pager(url="/profile/users", total=user_count, page=page, step=self._users_per_page,
+            pager = request.website.pager(url="/profile/lecturers", total=user_count, page=page, step=self._users_per_page,
                                           scope=page_count if page_count < self._pager_max_pages else self._pager_max_pages,
                                           url_args=kwargs)
 
-            users = User.sudo().search(dom, limit=self._users_per_page, offset=pager['offset'], order='karma DESC')
-            user_values = self._prepare_all_users_values(users)
-
-            # Get karma position for users (only website_published)
-            position_domain = [('karma', '>', 1), ('website_published', '=', True)]
-            position_map = self._get_position_map(position_domain, users, group_by)
-
-            max_position = max([user_data['karma_position'] for user_data in position_map.values()], default=1)
-            for user in user_values:
-                user_data = position_map.get(user['id'], dict())
-                user['position'] = user_data.get('karma_position', max_position + 1)
-                user['karma_gain'] = user_data.get('karma_gain_total', 0)
-            user_values.sort(key=itemgetter('position'))
+            users = User.sudo().search(dom, limit=self._users_per_page, offset=pager['offset'])
+            user_values = self._prepare_all_lectures_values(users)
 
             if my_user.website_published and my_user.karma and my_user.id not in users.ids:
                 # Need to keep the dom to search only for users that appear in the ranking page
                 current_user = User.sudo().search(expression.AND([[('id', '=', my_user.id)], dom]))
                 if current_user:
-                    current_user_values = self._prepare_all_users_values(current_user)[0]
-
-                    user_data = self._get_position_map(position_domain, current_user, group_by).get(current_user.id, {})
-                    current_user_values['position'] = user_data.get('karma_position', 0)
-                    current_user_values['karma_gain'] = user_data.get('karma_gain_total', 0)
+                    current_user_values = self._prepare_all_lectures_values(current_user)[0]
 
         else:
             user_values = []
             pager = {'page_count': 0}
+
         render_values.update({
-            'top3_users': user_values[:3] if not search_term and page == 1 else [],
             'users': user_values,
             'my_user': current_user_values,
             'pager': pager,
         })
-        return request.render("website_profile.my_coaches_page_main", render_values)
+        return request.render("website_profile.lecturers_page_main", render_values)
 
     def _get_position_map(self, position_domain, users, group_by):
         if group_by:

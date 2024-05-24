@@ -82,7 +82,7 @@
     <template id="user_profile_edit_content" name="Edit Profile">
         <h1 class="o_page_header">Edit Profile</h1>
         <div>
-            <form t-attf-action="/profile/user/save" method="post" role="form" class="o_wprofile_editor_form js_website_submit_form row" enctype="multipart/form-data">
+            <form t-attf-action="/profile/lecturer/save" method="post" role="form" class="o_wprofile_editor_form js_website_submit_form row" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <input type="file" class="d-none o_forum_file_upload" name="ufile" accept="image/*"/>
                 <input type="hidden" name="url_param" t-att-value="request.params.get('url_param')"/>
@@ -265,7 +265,7 @@
                         <div role="tabpanel" t-attf-class="tab-pane #{ 'show active' if not active_tab or active_tab == 'about' else '' }" id="profile_tab_content_about">
                             <div class="o_wprofile_email_validation_container mb16 mt16">
                                 <t t-call="website_profile.email_validation_banner">
-                                    <t t-set="redirect_url" t-value="'/profile/user/%s' % user.id"/>
+                                    <t t-set="redirect_url" t-value="'/profile/lecturer/%s' % user.id"/>
                                     <t t-set="additional_validation_email_message"/>
                                 </t>
                             </div>
@@ -316,14 +316,14 @@
     <!--
     My Lecturer Page
     -->
-    <template id="lecturer_page_main" name="Lecturer Page">
+    <template id="lecturers_page_main" name="Lecturers Page">
         <t t-set="body_classname" t-value="'o_wprofile_body'"/>
         <t t-call="website.layout">
             <div class="h-100 d-flex flex-column">
                 <div id="wrap" class="o_wprofile_wrap mt-0 pb-5 ">
-                    <t t-call="website_profile.lecturer_page_header"/>
+                    <t t-call="website_profile.lecturers_page_header"/>
                     <t t-if="users">
-                        <t t-call="website_profile.lecturer_page_content"/>
+                        <t t-call="website_profile.lecturers_page_content"/>
                     </t>
                 </div>
                 <t t-if="not users">
@@ -333,21 +333,21 @@
         </t>
     </template>
 
-    <template id="lecturer_page_header" name="Users Page Header">
+    <template id="lecturers_page_header" name="Users Page Header">
         <div class="o_wprofile_all_users_header o_wprofile_gradient pb-5">
-            <t t-call="website_profile.user_profile_sub_nav"/>
+            <t t-call="website_profile.lecturer_sub_nav"/>
             <div class="container">
                 <h1 class="py-4 text-white d-inline-block">Lecturer</h1>
             </div>
         </div>
     </template>
 
-    <template id="lecturer_page_content">
+    <template id="lecturers_page_content">
         <div class="o_wprofile_coaches_card_list container mb32 mt32 ">
             <table class="table table-sm" t-if='users'>
                 <t t-foreach="users" t-as="user">
-                    <tr t-attf-onclick="location.href='/profile/user/#{user['id']}';" t-attf-class="o_wprofile_pointer bg-white #{user['id'] == user_id.id and 'o_wprofile_border_focus'}">
-                        <t t-call="website_profile.coach_item_card"></t>
+                    <tr t-attf-onclick="location.href='/profile/lecturer/#{user['id']}';" t-attf-class="o_wprofile_pointer bg-white #{user['id'] == user_id.id and 'o_wprofile_border_focus'}">
+                        <t t-call="website_profile.lecturer_item_card"></t>
                     </tr>
                 </t>
                 <t t-if="my_user">
@@ -356,8 +356,8 @@
                         <td colspan="7"></td>
                     </tr>
                     <t t-set='user' t-value='my_user'/>
-                    <tr t-attf-onclick="location.href='/profile/user/#{user['id']}';" t-attf-class="o_wprofile_pointer bg-white o_wprofile_border_focus">
-                        <t t-call="website_profile.coach_item_card">
+                    <tr t-attf-onclick="location.href='/profile/lecturer/#{user['id']}';" t-attf-class="o_wprofile_pointer bg-white o_wprofile_border_focus">
+                        <t t-call="website_profile.lecturer_item_card">
                         </t>
                     </tr>
                 </t>
@@ -372,15 +372,18 @@
     </template>
 
     <template id="lecturer_item_card" name="Lecturer Card">
-        <div class="o_wprofile_coaches_card card text-center mb-2 border-bottom-0 o_wprofile_pointer"  t-attf-onclick="location.href='/profile/user/#{user['id']}';">
+        <div class="o_wprofile_coaches_card card text-center mb-2 border-bottom-0 o_wprofile_pointer"  t-attf-onclick="location.href='/profile/lecturer/#{user['id']}';">
             <div class="card-body">
                 <img class="avatar rounded-circle img-fluid"
                         style="width: 128px; height: 128px; object-fit: cover;"
                          t-att-src="'/profile/avatar/%s?field=avatar_256%s' % (user['id'], '&amp;res_model=%s&amp;res_id=%s' % (record._name, record.id) if record else '')"/>
                 <div class="user-info" >
                     <h3 class="mt-2 mb-0" t-esc="user['name']"></h3>
-                    <span>San Francisco, CA</span>
-                    <a href="mailto:example@example.com">example@example.com</a>
+                    <div>
+                        <span t-esc="user['state_name']" />,
+                        <span t-esc="user['zip']" />
+                    </div>
+                    <span class="description" t-esc="user['lecture_description']" />
                 </div>
             </div>
         </div>

@@ -60,7 +60,7 @@ $owprofile-color-bg: mix($body-bg, #efeff4);
             & {
                 border-color: transparent;
             }
-    
+
             &:hover {
                 border-color: transparent;
                 background: #3d2938;
@@ -268,12 +268,21 @@ $owprofile-color-bg: mix($body-bg, #efeff4);
 .o_wprofile_coaches_card_list {
     display: flex;
     flex-wrap: wrap;
-    
+    padding: 10px;
+
     .o_wprofile_coaches_card {
-        flex: 1 1 calc(33% - 10px);
+        flex: 0 1 calc(50% - 20px);
         box-sizing: border-box;
-        margin: 5px;
+        margin: 10px;
         padding: 10px;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+            transform: scale(1.01);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
 
         .card-body {
             display: flex;
@@ -283,8 +292,35 @@ $owprofile-color-bg: mix($body-bg, #efeff4);
             .user-info {
                 display: flex;
                 flex-direction: column;
+                align-items: flex-start;
                 margin-left: 10px;
+                max-width: calc(100% - 150px);
+
+                .description {
+                    margin-top: 5px;
+
+                    pre {
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 3;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        line-height: 1.5; /* Adjust line height if necessary */
+                        max-height: 4.5em; /* 3 lines * 1.5 line height */
+                        white-space: break-spaces;
+                    }
+                }
             }
         }
+    }
+
+
+
+    &.o_wprofile_coaches_card:nth-child(2n+1) {
+        margin-right: 0;
+    }
+
+    &.o_wprofile_coaches_card:nth-child(2n) {
+        margin-left: 0;
     }
 }

@@ -16,7 +16,6 @@
         'views/gamification_badge_views.xml',
         'views/website_profile.xml',
         'views/lecturer_views.xml',
-        'views/coach_view.xml',
         'security/ir.model.access.csv',
     ],
     'assets': {

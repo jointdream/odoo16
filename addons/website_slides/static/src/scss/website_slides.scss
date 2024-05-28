@@ -257,14 +257,39 @@ $line-height-truncate: 1.25em;
 
 // Courses Card
 // **************************************************
-.o_wslides_course_card.o_wslides_course_unpublished {
-    opacity: 0.5;
+.o_wslides_course_card{
+    .rating_content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        span {
+            margin-right: 3px;
+        }
+    }
+    .o_wslides_course_unpublished {
+        opacity: 0.5;
+    }
+
+    // 课程卡片描述
+    .o_wslides_course_card_desc {
+        margin-top: 5px;
+    }
+
+    .o_wslides_course_card_amount_content {
+        .real_price {
+            font-size: 1rem;
+            color: #F01414;
+        }
+        del {
+            font-size: 12px;
+            color: #6C757D;
+        }
+    }
+
 }
 
-// 课程卡片描述
-.o_wslides_course_card_desc {
-    margin-top: 5px;
-}
+
 
 // New course page
 // **************************************************

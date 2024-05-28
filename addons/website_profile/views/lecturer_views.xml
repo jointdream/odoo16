@@ -204,7 +204,7 @@
                     <div class="col-12 col-md-8 col-lg-9 d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start">
                             <h1 class="o_card_people_name">
-                                <span t-field="user.name"/><small t-if="user.karma == 0"> (not verified)</small>
+                                <span t-field="user.name"/>
                             </h1>
 <!--                            <a class="btn btn-primary d-none d-md-inline-block" t-if="request.env.user == user and user.karma != 0 or request.env.user._is_admin()" t-attf-href="/profile/edit?url_param=#{edit_button_url_param}&amp;user_id=#{user.id}">-->
 <!--                                <i class="fa fa-pencil me-2"/>EDIT PROFILE-->
@@ -263,12 +263,6 @@
                     </ul>
                     <div class="tab-content py-4 o_wprofile_tabs_content mb-4" id="profile_extra_info_tabcontent">
                         <div role="tabpanel" t-attf-class="tab-pane #{ 'show active' if not active_tab or active_tab == 'about' else '' }" id="profile_tab_content_about">
-                            <div class="o_wprofile_email_validation_container mb16 mt16">
-                                <t t-call="website_profile.email_validation_banner">
-                                    <t t-set="redirect_url" t-value="'/profile/lecturer/%s' % user.id"/>
-                                    <t t-set="additional_validation_email_message"/>
-                                </t>
-                            </div>
                             <div class="mb32">
                                 <h4>Lecture Description</h4>
                                 <span class="auto-wrap" t-field="user.partner_id.lecture_description" />

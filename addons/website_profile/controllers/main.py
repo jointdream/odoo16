@@ -110,7 +110,7 @@ class WebsiteProfile(http.Controller):
     
     @http.route(['/profile/lecturer/<int:user_id>'], type='http', auth="public", website=True)
     def view_lecturer(self, user_id, **post):
-        user = self._check_user_profile_access(user_id)
+        user = request.env['res.users'].sudo().browse(user_id)
         if not user:
             return request.render("website_profile.private_profile")
         values = self._prepare_user_values(**post)

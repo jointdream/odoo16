@@ -365,9 +365,9 @@ class WebsiteSlides(WebsiteProfile):
         render_values = self._slide_render_context_base()
         render_values.update(self._prepare_user_values(**post))
         render_values.update({
-            'channels_my': channels_my,
-            'channels_popular': channels_popular,
-            'channels_newest': channels_newest,
+            'channels_my': self._prepare_product_info_channel_values(channels_my),
+            'channels_popular': self._prepare_product_info_channel_values(channels_popular),
+            'channels_newest': self._prepare_product_info_channel_values(channels_newest),
             'achievements': achievements,
             'users': users,
             'lecturers': lecturers,
@@ -433,10 +433,12 @@ class WebsiteSlides(WebsiteProfile):
         else:
             search_tags = request.env['slide.channel.tag']
 
+        website_config = tools.lazy(lambda: request.env['website'].get_current_website())
+
         render_values = self._slide_render_context_base()
         render_values.update(self._prepare_user_values(**post))
         render_values.update({
-            'channels': channels,
+            'channels': self._prepare_product_info_channel_values(channels),
             'tag_groups': tag_groups,
             'search_term': search_term,
             'search_slide_category': slide_category,
@@ -448,9 +450,13 @@ class WebsiteSlides(WebsiteProfile):
             'top3_users': self._get_top3_users(),
             'slugify_tags': self._slugify_tags,
             'slide_query_url': QueryURL('/slides/all', ['tag']),
+            'website_config': website_config,
         })
 
         return render_values
+
+    def _prepare_product_info_channel_values(self, channels):
+        return [self._prepare_additional_channel_values({'channel': channel}) for channel in channels]
 
     def _prepare_additional_channel_values(self, values, **kwargs):
         return values
@@ -622,7 +628,8 @@ class WebsiteSlides(WebsiteProfile):
                     'default_slide_category': 'certification',
                 }]
 
-        render_values = self._prepare_additional_channel_values(render_values, **kw)
+        self.values = self._prepare_additional_channel_values(render_values, **kw)
+        render_values = self.values
         return request.render('website_slides.course_main', render_values)
 
     # SLIDE.CHANNEL UTILS

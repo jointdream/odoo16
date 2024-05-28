@@ -38,9 +38,9 @@ class CustomerPortal(portal.CustomerPortal):
         ]
 
     def _prepare_orders_domain(self, partner):
+        # 让 website 用户看到的 My Orders 列表中包含 Quotation 订单
         return [
-            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
-            ('state', 'in', ['sale', 'done'])
+            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id])
         ]
 
     def _get_sale_searchbar_sortings(self):

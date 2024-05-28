@@ -437,16 +437,16 @@
                     </t>
                 </div>
                 <div>
-                    开课日期: <span class="o_wslides_course_card_desc"><t t-esc="data['channel'].start_time"/></span>
+                    Start Date: <span class="o_wslides_course_card_desc"><t t-esc="data['channel'].start_time"/></span>
                 </div>
                 <div>
-                    报名人数: <span class="o_wslides_course_card_desc"><t t-esc="data['channel'].reg_count_display"/></span>
+                    Registration Number: <span class="o_wslides_course_card_desc"><t t-esc="data['channel'].reg_count_display"/></span>
                 </div>
                 <div>
-                    报名截止: <span class="o_wslides_course_card_desc"><t t-esc="data['channel'].reg_deadline"/></span>
+                    Deadline: <span class="o_wslides_course_card_desc"><t t-esc="data['channel'].reg_deadline"/></span>
                 </div>
                 <div class="rating_content">
-                    <span>rating:</span>
+                    <span>Rating: </span>
                     <t t-call="website_slides.rating_widget_simple_stars_static">
                         <t t-set="rating_count" t-value="data['channel'].rating_count"/>
                         <t t-set="rating_avg" t-value="data['channel'].rating_avg"/>

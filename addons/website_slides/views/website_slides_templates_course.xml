@@ -210,20 +210,20 @@
                                     <!-- 课程概要 -->
                                     <div class="o_wslides_desc_card">
                                         <div class="o_wslides_desc">
-                                            上课方式: 
+                                            Type:
                                             <span class="badge o_wslides_channel_tag o_tag_color_1" t-if="channel.is_live">Live Video</span>
                                             <span class="badge o_wslides_channel_tag o_tag_color_2" t-if="channel.is_offline">Online Course</span>
                                             <span class="badge o_wslides_channel_tag o_tag_color_3" t-if="channel.is_online">Online Course</span>
                                             <span class="badge o_wslides_channel_tag o_tag_color_4" t-if="channel.is_video">Video Record</span>
                                         </div>
                                         <div class="o_wslides_desc">
-                                            开课日期: <span class="o_wslides_course_card_desc" t-esc="channel.start_time" />
+                                            Start Date: <span class="o_wslides_course_card_desc" t-esc="channel.start_time" />
                                         </div>
                                         <div class="o_wslides_desc">
-                                            结束日期: <span class="o_wslides_course_card_desc" t-esc="channel.end_time" />
+                                            End Date: <span class="o_wslides_course_card_desc" t-esc="channel.end_time" />
                                         </div>
                                         <div class="o_wslides_desc">
-                                            报名截止日期: <span class="o_wslides_course_card_desc" t-esc="channel.reg_deadline" />
+                                            Deadline: <span class="o_wslides_course_card_desc" t-esc="channel.reg_deadline" />
                                         </div>
                                     </div>
                                     <!-- 讲师名称 -->

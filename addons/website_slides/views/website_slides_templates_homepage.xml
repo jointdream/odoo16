@@ -165,7 +165,7 @@
                 </div>
             </div>
             <t t-call="website_slides.courses_footer"></t>
-            <t t-if="website_config.course_consultant" t-call="website_slides.course_consultant_float_button"></t>
+            <t t-call="website_slides.course_consultant_float_button"></t>
         </div>
     </t>
 </template>
@@ -351,7 +351,7 @@
                     </div>
                 </t>
             </div>
-            <t t-if="website_config.course_consultant" t-call="website_slides.course_consultant_float_button"></t>
+            <t t-call="website_slides.course_consultant_float_button"></t>
             <t t-call="website_slides.courses_footer" />
         </div>
     </t>
@@ -365,7 +365,7 @@
 
 <!--课程顾问悬浮按钮 -->
 <template id='course_consultant_float_button'>
-    <div class="course_consultant_float_button">
+    <div t-if="website_config.course_consultant" class="course_consultant_float_button">
         <button id="fixed_button" class="btn-primary">
             <i class="fa fa-comments" aria-hidden="true"></i>
         </button>

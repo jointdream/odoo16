@@ -477,16 +477,20 @@
                         </span>
                     </a>
                     <div t-elif="data['product_info'] and data['channel'].product_id.website_published and not data['channel'].is_member" >
-                        <form action="/shop/cart/update" method="POST">
-                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-                            <input type="hidden" class="product_id" name="product_id" t-att-value="data['channel'].product_id.id"/>
-                            <a id="add_to_cart" role="button" href="#"
-                               class="btn btn-primary btn-sm d-block js_check_product a-submit"
-                               data-animation-selector=".o_wslides_course_pict">
-                                <i class="fa fa-shopping-cart"></i> Add to Cart
-                            </a>
-                            <div id="product_option_block"/>
-                        </form>
+                        <div class="oe_website_sale">
+                            <div class="add_to_cart_button">
+                                <form action="/shop/cart/update" method="POST">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                    <input type="hidden" class="product_id" name="product_id" t-att-value="data['channel'].product_id.id"/>
+                                    <a id="add_to_cart" role="button" href="#"
+                                    class="btn btn-primary btn-sm d-block js_check_product o_js_add_to_cart a-submit"
+                                    data-animation-selector=".o_wslides_course_pict">
+                                        <i class="fa fa-shopping-cart"></i> Add to Cart
+                                    </a>
+                                    <div id="product_option_block"/>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

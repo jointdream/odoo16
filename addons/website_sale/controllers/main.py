@@ -1736,6 +1736,14 @@ class WebsiteSale(http.Controller):
             state_required=country.state_required,
         )
 
+    @http.route(['/shop/city_infos/<int:state_id>'], type='json', auth="public", methods=['POST'],
+                website=True)
+    def city_infos(self, state_id, **kw):
+        if not state_id:
+            return []
+        cities = request.env['res.city'].search([('state_id', '=', state_id)])
+        return [(city.id, city.name) for city in cities]
+
     # --------------------------------------------------------------------------
     # Products Recently Viewed
     # --------------------------------------------------------------------------

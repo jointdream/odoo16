@@ -250,21 +250,45 @@ class CustomerPortal(Controller):
             'Content-Security-Policy': "frame-ancestors 'self'"
         })
 
+    @route('/agent/application/<int:applicant_id>/cancel', type='http', auth='user', website=True, methods=['POST'])
+    def agent_application_cancel(self, applicant_id, **post):
+        if not applicant_id:
+            return request.redirect('/my/home')
+        
+        agent_application = self._get_agent_application(applicant_id)
+        if not agent_application:
+            return request.redirect('/my/home')
+        
+        agent_application.action_cancel()
+        return request.redirect('/my/home')
+
     @route('/agent/application', type='http', auth='user', website=True, methods=['GET', 'POST'], csrf=False)
     def agent_application(self, **post):
-        values = self._prepare_portal_layout_values()
-
+        """申请成为经纪人表单渲染及提交"""
+        user_is_internal = request.env.user._is_internal()
+        if user_is_internal:
+            return request.redirect('/my/home')
+        
+        agent_application = self._get_agent_application(request.env.user.partner_id.id)
+        if agent_application and (agent_application.state in ['under_review', 'approved']):
+            return request.redirect('/my/home')
+        
+        # 提交表单
         if request.httprequest.method == 'POST':
             # todo: validate the form
             email = request.env.user.email
             app_entry = self._estate_app_entry_build_values(post, email)
-            request.env['estate.app.entry'].sudo().create(app_entry)
+            res = request.env['estate.app.entry'].sudo().create(app_entry)
+            res.action_submit()
             return request.redirect('/my/home')
+        
+        values = self._prepare_portal_layout_values()
 
         languages = request.env['estate.cfg.agent.working.language'].sudo().search([])
-
         values.update({'error': dict(), 'working_languages': languages})
+        
         values.update(self._get_country_related_render_values(post, values))
+        values.update({'record': agent_application})
 
         return request.render('portal.portal_agent_application', values)
 
@@ -281,7 +305,7 @@ class CustomerPortal(Controller):
             'emergency_contact_name': post.get('emergency_contact_name'),
             'emergency_contact_phone': post.get('emergency_contact_phone'),
             'website': post.get('website'),
-            'has_driver_license': bool(post.get('has_driver_license')),
+            'has_driver_license': post.get('has_driver_license') == 'True',
             'other_license_type': post.get('other_license_type'),
             'driver_license_no': post.get('driver_license_no'),
             'driver_license_exp_date': datetime.strptime(post.get('driver_license_exp_date'), "%Y-%m-%d").date(),
@@ -293,13 +317,13 @@ class CustomerPortal(Controller):
             'federal_tax_type': post.get('federal_tax_type'),
             'previous_broker': post.get('previous_broker'),
             'federal_tax_type_other': post.get('federal_tax_type_other'),
-            'agent_is_currently_licensed': bool(post.get('agent_is_currently_licensed')),
-            'has_DRE_license': bool(post.get('agent_is_currently_licensed')),
-            'is_from_bq_license_school': bool(post.get('is_from_bq_license_school')),
+            'agent_is_currently_licensed': post.get('agent_is_currently_licensed') == 'True',
+            'has_DRE_license': post.get('agent_is_currently_licensed') == 'True',
+            'is_from_bq_license_school': post.get('is_from_bq_license_school') == 'True',
             'DRE_license_type': post.get('DRE_license_type'),
             'DRE_license_type_other': post.get('DRE_license_type_other'),
             'DRE_license_no': post.get('DRE_license_no'),
-            'has_NMLS_license': bool(post.get('has_NMLS_license')),
+            'has_NMLS_license': post.get('has_NMLS_license') == 'True',
             'NMLS_license_no': post.get('NMLS_license_no'),
             'w9_file': base64.b64encode(post.get('w9_file').read()),
         }
@@ -342,9 +366,8 @@ class CustomerPortal(Controller):
         dom = [
             ('applicant_id', '=', user_id),
             ('category_id.acronym', '=', 'entry'),
-            ('state', 'not in', ['approved', 'rejected', 'cancelled']),
         ]
-        return request.env['estate.app.abstract'].sudo().search(dom, limit=1, order='id desc')
+        return request.env['estate.app.entry'].sudo().search(dom, limit=1, order='id desc')
 
     def _update_password(self, old, new1, new2):
         for k, v in [('old', old), ('new1', new1), ('new2', new2)]:

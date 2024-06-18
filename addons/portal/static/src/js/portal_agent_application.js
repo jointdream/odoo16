@@ -50,24 +50,35 @@ odoo.define("portal.agent_application", function (require) {
         const def = this._super(...arguments);
 
         this._onChangeLicenseType({
-          target: $("#div_agent_is_currently_licensed")[0],
+          target: $("#div_license_type select")[0],
         });
-        this._onChangeFederalTaxType({ target: $("#div_federal_tax_type")[0] });
+        this._onChangeFederalTaxType({
+          target: $("#div_federal_tax_type select")[0],
+        });
         this._onChangeCertificateType({
-          target: $("#div_has_driver_license")[0],
+          target: $("#div_has_driver_license select")[0],
         });
         this._onChangeBqLoanOfficers({
-          target: $("#div_has_NMLS_license")[0],
+          target: $("#div_has_NMLS_license select")[0],
         });
 
+        this._onChangeW9Type({
+          target: $("#div_w9_type select")[0],
+        });
+        this._onChangeLicense({
+          target: $("#div_agent_is_currently_licensed select")[0],
+        });
+        this._onChangeWorkingLanguages({
+          target: $("#div_working_languages input")[0],
+        });
         this.$('select[name="country_id"]').change();
+
         return def;
       },
       destroy() {
         this._super.apply(this, arguments);
       },
       _onChangeCertificateType: function (ev) {
-        console.log("ev", $(ev.target).val());
         if (this.$(ev.target).val() == "False") {
           this.$("#div_other_license_type input").show();
           this.$("#div_other_license_type input").prop("required", true);

@@ -306,12 +306,14 @@ img, .media_iframe_video, .o_image {
 .o_portal_wrap {
     .o_portal_my_home {
         .alert-info {
-            padding: 10px 20px;
+            padding: 10px 15px;
             border-radius: 5px;
-            background-color: rgba(map-get($theme-colors, 'primary'), 0.4);
+            background-color: rgba(map-get($theme-colors, 'primary'), 0.1);
+            color: rgba(0, 0, 0, 0.85);
+            text-align: center;
 
             i {
-                color: rgba(map-get($theme-colors, 'primary'), 1);
+                color: rgba(0, 0, 0, 0.65);
             }
         }
     }

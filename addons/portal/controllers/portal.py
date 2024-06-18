@@ -261,7 +261,7 @@ class CustomerPortal(Controller):
             request.env['estate.app.entry'].sudo().create(app_entry)
             return request.redirect('/my/home')
 
-        languages = request.env['estate.cfg.agent.working.language'].search([])
+        languages = request.env['estate.cfg.agent.working.language'].sudo().search([])
 
         values.update({'error': dict(), 'working_languages': languages})
         values.update(self._get_country_related_render_values(post, values))

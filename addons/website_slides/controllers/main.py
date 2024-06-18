@@ -318,7 +318,7 @@ class WebsiteSlides(WebsiteProfile):
         result = []
 
         for item in channel:
-            if not item.user_id.website_published:
+            if not item.user_id.sudo().website_published:
                 continue
             if item.user_id.id not in seen_ids:
                 seen_ids.add(item.user_id.id)
@@ -333,13 +333,13 @@ class WebsiteSlides(WebsiteProfile):
         if not request.env.user._is_public():
             #If a course is completed, we don't want to see it in first position but in last
             channels_my = tools.lazy(lambda: channels_all.filtered(lambda channel: channel.is_member).sorted(lambda channel: 0 if channel.completed else channel.completion, reverse=True)[:3])
+            channels_newest = tools.lazy(lambda: channels_all.sorted('create_date', reverse=True)[:3])
         else:
             channels_my = request.env['slide.channel']
+            channels_newest = tools.lazy(lambda: channels_all.filtered(lambda channel: channel.visibility == "public").sorted('create_date', reverse=True)[:3])
         channels_popular = tools.lazy(lambda: channels_all.sorted('total_votes', reverse=True)[:3])
-        channels_all_newest = tools.lazy(lambda: channels_all.sorted('create_date', reverse=True)[:3])
-        channels_newest = channels_all_newest[:3]
 
-        lecturers = self._get_channel_lecturer(channels_all_newest)[:3]
+        lecturers = self._get_channel_lecturer(channels_newest)
 
         achievements = tools.lazy(lambda: request.env['gamification.badge.user'].sudo().search([('badge_id.is_published', '=', True)], limit=5))
         if request.env.user._is_public():

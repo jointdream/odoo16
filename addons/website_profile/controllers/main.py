@@ -225,12 +225,12 @@ class WebsiteProfile(http.Controller):
         user_values = []
         for user in users:
             user_values.append({
-                'id': user.id,
-                'name': user.name,
-                'city_name': user.address_id.city,
-                'state_name': user.address_id.state_id.name,
+                'id': user.partner_id.id,
+                'name': user.partner_id.name,
+                'city_name': user.partner_id.city,
+                'state_name': user.partner_id.state_id.name,
                 'lecture_description': user.partner_id.lecture_description,
-                'zip': user.address_id.zip,
+                'zip': user.partner_id.zip,
                 'website_published': user.website_published
             })
         return user_values

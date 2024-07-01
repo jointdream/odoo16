@@ -594,13 +594,13 @@
         <b class="me-2 text-muted" t-esc="counter"/>
         <img t-att-class="img_class if img_class else 'rounded-circle float-start'"
             t-att-style="img_style if img_style else 'width: 32px; height: 32px; object-fit: cover;'"
-            t-att-src="'/profile/avatar/%s?field=avatar_128' % lecturer.id"
-            t-att-alt="lecturer.name" />
+            t-att-src="'/profile/avatar/%s?field=avatar_128' % lecturer.partner_id.id"
+            t-att-alt="lecturer.partner_id.name" />
         <div style="line-height:1.3">
-            <span class="fw-bold" t-esc="lecturer.name" />
+            <span class="fw-bold" t-esc="lecturer.partner_id.name" />
             <div class="align-items-center">
-                <span t-esc="lecturer.address_id.state_id.name" />,
-                <span t-esc="lecturer.address_id.zip" />
+                <span t-esc="lecturer.partner_id.state_id.name" />,
+                <span t-esc="lecturer.partner_id.zip" />
             </div>
         </div>
     </div>

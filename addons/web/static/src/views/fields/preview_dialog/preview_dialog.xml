@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="web.PreviewDialog" owl="1">
+        <Dialog title="'Preview ' + props.fileName" size="'lg'" footer="false">
+            <t t-if="isPdf">
+                <iframe class="o_pdfview_iframe"
+                    alt="PDF file"
+                    t-att-src="pdfUrl"
+                    t-att-name="props.fileName"
+                    t-on-error="onLoadFailed"
+                />
+            </t>
+            <t t-if="isImage">
+                 <div class="o_image_zoom">
+                    <img t-att-src="imgUrl" />
+                </div>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>

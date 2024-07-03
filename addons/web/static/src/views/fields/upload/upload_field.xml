@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="web.UploadField" owl="1">
+        <div  class="o_field_upload">
+            <t t-if="props.value">
+                <t t-call="UploadField.attachment_preview"/>
+            </t>
+            <t t-else="">
+                <label class="o_select_file_button btn btn-primary">
+                    <FileUploader
+                        acceptedFileExtensions="props.acceptedFileExtensions or defaultAcceptedFileExtensions"
+                        onUploaded.bind="onFileUploaded"
+                    >
+                        <t t-set-slot="toggler">
+                            Upload your file
+                        </t>
+                    </FileUploader>
+                </label>
+            </t>
+        </div>
+    </t>
+
+<t t-name="UploadField.attachment_preview" owl="1">
+    <FileUploader
+        acceptedFileExtensions="props.acceptedFileExtensions or defaultAcceptedFileExtensions"
+        file="{ data: props.value, name: fileName }"
+        onUploaded.bind="update"
+    >
+        <t t-set="editable" t-value="!props.readonly"/>
+        <div t-attf-class="o_attachment o_attachment_many2many #{ editable ? 'o_attachment_editable' : '' } #{upload ? 'o_attachment_uploading' : ''}" t-att-title="props.name">
+            <div class="o_attachment_wrap">
+                <div class="o_image_box float-start" t-att-data-tooltip="'Preview' + fileName">
+                    <a t-on-click="triggerPreview">
+                        <span class="o_image o_hover" t-att-data-mimetype="fileMineType" t-att-data-ext="extension" role="img"/>
+                    </a>
+                </div>
+
+                <div class="caption">
+                    <a class="ml4 file-title" t-att-data-tooltip="'Download ' + fileName" t-on-click="onFileDownload"><t t-esc='fileName'/></a>
+                </div>
+                <div class="caption small">
+                    <a class="ml4 small text-uppercase"><b><t t-esc='extension'/></b></a>
+                    <div t-if="editable" class="progress o_attachment_progress_bar">
+                        <div class="progress-bar progress-bar-striped active" style="width: 100%">Uploading</div>
+                    </div>
+                </div>
+
+                <div class="o_attachment_uploaded"><i class="text-success fa fa-check" role="img" aria-label="Uploaded" title="Uploaded"/></div>
+                <div t-if="editable" class="o_attachment_delete" t-on-click.stop="onFileRemove"><span class="text-white" role="img" aria-label="Delete" title="Delete">×</span></div>
+            </div>
+        </div>
+    </FileUploader>
+</t>
+
+</templates>

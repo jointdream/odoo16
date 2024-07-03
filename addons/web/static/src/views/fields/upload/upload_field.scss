@@ -1,0 +1,15 @@
+.o_field_widget.o_field_upload {
+  width: 100%;
+
+  .o_attachment_many2many {
+    width: 100%;
+  }
+
+  .file-title {
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+      color: map-get($theme-colors, "primary");
+    }
+  }
+}

@@ -9,6 +9,7 @@
                     t-att-src="pdfUrl"
                     t-att-name="props.fileName"
                     t-on-error="onLoadFailed"
+                    style="width: 100%; height: 80vh;"
                 />
             </t>
             <t t-if="isImage">

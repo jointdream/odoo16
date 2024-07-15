@@ -696,19 +696,19 @@
                     <div class="steps-item-container steps-item-active" id="steps-item-container-1" data-id="1">
                         <div class="steps-item-content">
                             <div class="steps-item-icon"><i class="fa fa-user-o" aria-hidden="true"/></div>
-                            <div class="steps-item-title">Personal information</div>
+                            <div class="steps-item-title">Personal Information</div>
                         </div>
                     </div>
                     <div class="steps-item-container" id="steps-item-container-2" data-id="2">
                         <div class="steps-item-content">
                             <div class="steps-item-icon"><i class="fa fa-address-card-o" aria-hidden="true"/></div>
-                            <div class="steps-item-title">Agent information</div>
+                            <div class="steps-item-title">Agent Information</div>
                         </div>
                     </div>
                     <div class="steps-item-container" id="steps-item-container-3" data-id="3">
                         <div class="steps-item-content">
                             <div class="steps-item-icon"><i class="fa fa-folder-o" aria-hidden="true"/></div>
-                            <div class="steps-item-title">Upload files</div>
+                            <div class="steps-item-title">Upload Files</div>
                         </div>
                     </div>
                 </div>
@@ -721,15 +721,15 @@
                     <input type="hidden" name="language_ids" value="" id="language_ids"/>
                     <div class="row mb32" id="step-form-1">
                         <div t-attf-class="mb-3 #{error.get('last_name') and 'o_has_error' or ''} col-lg-6" id="div_last_name">
-                            <label class="col-form-label" for="last_name">Last name</label>
+                            <label class="col-form-label" for="last_name">Last Name</label>
                             <input type="text" name="last_name" required="required" t-attf-class="form-control #{error.get('last_name') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('first_name') and 'o_has_error' or ''} col-lg-6" id="div_first_name">
-                            <label class="col-form-label" for="first_name">First name</label>
+                            <label class="col-form-label" for="first_name">First Name</label>
                             <input type="text" name="first_name" required="required" t-attf-class="form-control #{error.get('first_name') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('nick_name') and 'o_has_error' or ''} col-lg-6" id="div_nick_name">
-                            <label class="col-form-label label-optional" for="nick_name">Nick name</label>
+                            <label class="col-form-label label-optional" for="nick_name">Nick Name</label>
                             <input type="text" name="nick_name" t-att-value="record and record.nick_name" t-attf-class="form-control #{error.get('nick_name') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('country_id') and 'o_has_error' or ''} col-lg-6 div_country">
@@ -770,18 +770,21 @@
                         </div>
                         <div t-attf-class="mb-3 #{error.get('phone') and 'o_has_error' or ''} col-lg-6" id="div_phone">
                             <label class="col-form-label" for="phone">Phone</label>
-                            <input type="tel" name="phone" t-att-value="record and record.phone" required="required" t-attf-class="form-control #{error.get('phone') and 'is-invalid' or ''}"/>
+                            <div class="d-flex w-100">
+                                <input style="width: 20%" type="tel" name="phone_code" t-attf-class="form-control #{error.get('phone_code') and 'is-invalid' or ''}"/>
+                                <input style="width: 80%" type="tel" name="phone" required="required" t-attf-class="form-control #{error.get('phone') and 'is-invalid' or ''}"/>
+                            </div>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('ssnid') and 'o_has_error' or ''} col-lg-6" id="div_ssn">
                             <label class="col-form-label" for="ssnid">SSN</label>
                             <input type="text" name="ssnid" t-att-value="record and record.ssnid" required="required" t-attf-class="form-control #{error.get('ssnid') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('emergency_contact_name') and 'o_has_error' or ''} col-lg-6" id="div_emergency_contact_name">
-                            <label class="col-form-label" for="emergency_contact_name">Emergency contact name</label>
+                            <label class="col-form-label" for="emergency_contact_name">Emergency Contact Name</label>
                             <input type="text" name="emergency_contact_name" t-att-value="record and record.emergency_contact_name" required="required" t-attf-class="form-control #{error.get('emergency_contact_name') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('emergency_contact_phone') and 'o_has_error' or ''} col-lg-6" id="div_emergency_contact_phone">
-                            <label class="col-form-label" for="emergency_contact_phone">Emergency contact phone</label>
+                            <label class="col-form-label" for="emergency_contact_phone">Emergency Contact Phone</label>
                             <input type="tel" name="emergency_contact_phone" t-att-value="record and record.emergency_contact_phone" required="required" t-attf-class="form-control #{error.get('emergency_contact_phone') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('working_languages') and 'o_has_error' or ''} col-lg-6 div_working_languages" id="div_working_languages">
@@ -802,8 +805,8 @@
                         <div t-attf-class="mb-3 #{error.get('has_driver_license') and 'o_has_error' or ''} col-lg-6 div_has_driver_license" id="div_has_driver_license">
                             <label class="col-form-label" for="has_driver_license">Valid ID</label>
                             <select name="has_driver_license" required="required" t-attf-class="form-select #{error.get('has_driver_license') and 'is-invalid' or ''}">
-                                <option value="True" t-att-selected="record and record.has_driver_license">Driver's license</option>
-                                <option value="False" t-att-selected="record and record.has_driver_license == False">Other documents</option>
+                                <option value="True" t-att-selected="record and record.has_driver_license">Driver's License</option>
+                                <option value="False" t-att-selected="record and record.has_driver_license == False">Other Documents</option>
                             </select>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('other_license_type') and 'o_has_error' or ''} col-lg-6" id="div_other_license_type">
@@ -811,15 +814,15 @@
                             <input type="text" name="other_license_type" t-att-value="record and record.other_license_type" t-attf-class="form-control #{error.get('other_license_type') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('driver_license_no') and 'o_has_error' or ''} col-lg-6" id="div_driver_license_no">
-                            <label class="col-form-label" for="driver_license_no">ID number</label>
+                            <label class="col-form-label" for="driver_license_no">ID Number</label>
                             <input type="tel" name="driver_license_no" t-att-value="record and record.driver_license_no" required="required" t-attf-class="form-control #{error.get('driver_license_no') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('driver_license_exp_date') and 'o_has_error' or ''} col-lg-6" id="div_driver_license_exp_date">
-                            <label class="col-form-label" for="driver_license_exp_date">ID expire date</label>
+                            <label class="col-form-label" for="driver_license_exp_date">ID Expire Date</label>
                             <input type="date" name="driver_license_exp_date" t-att-value="record and record.driver_license_exp_date" data-date-format="YYYY-MM-DD" required="required" t-attf-class="form-control #{error.get('certificate_number') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('birthday') and 'o_has_error' or ''} col-lg-6" id="div_birthday">
-                            <label class="col-form-label" for="birthday">Birthday</label>
+                            <label class="col-form-label" for="birthday">Date Of Birthday</label>
                             <input type="date" name="birthday" required="required" t-att-value="record and record.birthday" data-date-format="YYYY-MM-DD" t-attf-class="form-control #{error.get('birthday') and 'is-invalid' or ''}"/>
                         </div>
                         <div class="btn-container">
@@ -828,7 +831,7 @@
                     </div>
                     <div class="row" id="step-form-2" style="display:none">
                         <div t-attf-class="mb-3 #{error.get('w9_type') and 'o_has_error' or ''} col-lg-6" id="div_w9_type">
-                            <label class="col-form-label" for="w9_type">W9 type</label>
+                            <label class="col-form-label" for="w9_type">W9 Type</label>
                             <select name="w9_type" required="required" t-attf-class="form-select #{error.get('w9_type') and 'is-invalid' or ''}" data-init="1">
                                 <t t-foreach="[('business', 'Business'), ('personal', 'Personal')]" t-as="s">
                                     <option t-att-value="s[0]" t-att-selected="record and record.w9_type == s[0]">
@@ -838,7 +841,7 @@
                             </select>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('business_name') and 'o_has_error' or ''} col-lg-6" id="div_business_name">
-                            <label class="col-form-label" for="business_name">Business name</label>
+                            <label class="col-form-label" for="business_name">Business Name</label>
                             <input type="text" name="business_name" t-att-value="record and record.business_name" required="required" t-attf-class="form-control #{error.get('business_name') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('ein') and 'o_has_error' or ''} col-lg-6" id="div_ein">
@@ -850,7 +853,7 @@
                             <input type="text" name="business_addr" t-att-value="record and record.business_addr" t-attf-class="form-control #{error.get('business_addr') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('federal_tax_type') and 'o_has_error' or ''} col-lg-6" id="div_federal_tax_type">
-                            <label class="col-form-label" for="federal_tax_type">Federal tax classification</label>
+                            <label class="col-form-label" for="federal_tax_type">Federal Tax Classification</label>
                             <select name="federal_tax_type" required="required" t-attf-class="form-select #{error.get('federal_tax_type') and 'is-invalid' or ''}" data-init="1">
                                 <option value="sole" t-att-selected="record and record.federal_tax_type == 'sole'">Sole Proprietor Or Single-Member LLC</option>
                                 <option value="partnership" t-att-selected="record and record.federal_tax_type == 'partnership'">Partnership</option>
@@ -866,21 +869,21 @@
                             <input type="text" name="federal_tax_type_other" t-att-value="record and record.federal_tax_type_other" t-attf-class="form-control #{error.get('federal_tax_type_other') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('agent_is_currently_licensed') and 'o_has_error' or ''} col-lg-6" id="div_agent_is_currently_licensed">
-                            <label class="col-form-label" for="agent_is_currently_licensed">Is currently licensed?</label>
+                            <label class="col-form-label" for="agent_is_currently_licensed">Is Currently Licensed?</label>
                             <select name="agent_is_currently_licensed" required="required" t-attf-class="form-select #{error.get('agent_is_currently_licensed') and 'is-invalid' or ''}" data-init="1">
                                 <option value="True" t-att-selected="record and record.agent_is_currently_licensed">Yes</option>
                                 <option value="False" t-att-selected="record and record.agent_is_currently_licensed == False">No</option>
                             </select>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('is_from_bq_license_school') and 'o_has_error' or ''} col-lg-6 div_is_from_bq_license_school">
-                            <label class="col-form-label" for="is_from_bq_license_school">Is from BQ license school</label>
+                            <label class="col-form-label" for="is_from_bq_license_school">Is From BQ License School?</label>
                             <select name="is_from_bq_license_school" required="required" t-attf-class="form-select #{error.get('is_from_bq_license_school') and 'is-invalid' or ''}" data-init="1">
                                 <option value="True" t-att-selected="record and record.is_from_bq_license_school">Yes</option>
                                 <option value="False" t-att-selected="record and record.is_from_bq_license_school == False">No</option>
                             </select>
                         </div>
                         <div id="div_license_type" t-attf-class="mb-3 #{error.get('DRE_license_type') and 'o_has_error' or ''} col-lg-6 div_license_type">
-                            <label class="col-form-label" for="DRE_license_type">License type</label>
+                            <label class="col-form-label" for="DRE_license_type">License Type</label>
                             <select name="DRE_license_type" required="required" t-attf-class="form-select #{error.get('DRE_license_type') and 'is-invalid' or ''}" data-init="broker">
                                 <option value="broker" t-att-selected="record and record.DRE_license_type == 'broker'">Broker</option>
                                 <option value="salesperson" t-att-selected="record and record.DRE_license_type == 'salesperson'">Salesperson</option>
@@ -899,15 +902,15 @@
                             <input type="text" name="DRE_license_no" t-att-value="record and record.DRE_license_no" required="required" t-attf-class="form-control #{error.get('DRE_license_no') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('DRE_license_exp_date') and 'o_has_error' or ''} col-lg-6" id="div_DRE_license_exp_date">
-                            <label class="col-form-label" for="DRE_license_exp_date">License expiration date</label>
+                            <label class="col-form-label" for="DRE_license_exp_date">License Expiration Date</label>
                             <input type="date" name="DRE_license_exp_date" t-att-value="record and record.DRE_license_exp_date" data-date-format="YYYY-MM-DD" required="required" t-attf-class="form-control #{error.get('DRE_license_exp_date') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('previous_broker') and 'o_has_error' or ''} col-lg-6" id="div_previous_broker">
-                            <label class="col-form-label" for="previous_broker">Previous broker</label>
+                            <label class="col-form-label" for="previous_broker">Previous Broker</label>
                             <input type="text" name="previous_broker" t-att-value="record and record.previous_broker" required="required" t-attf-class="form-control #{error.get('previous_broker') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('has_NMLS_license') and 'o_has_error' or ''} col-lg-6 div_has_NMLS_license" id="div_has_NMLS_license">
-                            <label class="col-form-label" for="has_NMLS_license">Are you a loan officer?</label>
+                            <label class="col-form-label" for="has_NMLS_license">Are You A Loan Officer?</label>
                             <select name="has_NMLS_license" required="required" t-attf-class="form-select #{error.get('has_NMLS_license') and 'is-invalid' or ''}" data-init="1">
                                 <option value="False" t-att-selected="record and record.has_NMLS_license == False">No</option>
                                 <option value="True" t-att-selected="record and record.has_NMLS_license">Yes</option>
@@ -933,14 +936,14 @@
                     </div>
                     <div class="row" id="step-form-3" style="display:none">
                         <div t-attf-class="mb-3 #{error.get('driver_license_file') and 'o_has_error' or ''} col-lg-6" id="div_driver_license_file">
-                            <label class="col-form-label label-optional" for="driver_license_file">DRE License affiliated with BQ</label>
+                            <label class="col-form-label label-optional" for="driver_license_file">DRE License Affiliated with BQ</label>
                             <input type="file" name="driver_license_file" t-attf-class="form-control #{error.get('driver_license_file') and 'is-invalid' or ''}"/>
                             <a href="#" style="font-size: 0.75rem">Click for Instructions</a>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('w9_file') and 'o_has_error' or ''} col-lg-6" id="div_w9_file">
                             <label class="col-form-label" for="w9_file">W9</label>
                             <input type="file" name="w9_file" accept="image/*,application/pdf" required="required" t-attf-class="form-control #{error.get('w9_file') and 'is-invalid' or ''}"/>
-                            <a href="#" style="font-size: 0.75rem">Download template</a>
+                            <a href="#" style="font-size: 0.75rem">Download Template</a>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('id_file_p1') and 'o_has_error' or ''} col-lg-6" id="div_id_file_p1">
                             <label class="col-form-label label-optional" for="id_file_p1">ID File(Page 1)</label>
@@ -951,7 +954,7 @@
                             <input type="file" name="id_file_p2" accept="image/*" t-attf-class="form-control #{error.get('id_file_p2') and 'is-invalid' or ''}"/>
                         </div>
                         <div t-attf-class="mb-3 #{error.get('photo_file') and 'o_has_error' or ''} col-lg-6" id="div_photo_file">
-                            <label class="col-form-label label-optional" for="photo_file">Professional photo</label>
+                            <label class="col-form-label label-optional" for="photo_file">Professional Photo</label>
                             <input type="file" name="photo_file" accept="image/*,application/pdf" t-attf-class="form-control #{error.get('photo_file') and 'is-invalid' or ''}"/>
                             <a href="#" style="font-size: 0.75rem">Click here to see photo example</a>
                         </div>

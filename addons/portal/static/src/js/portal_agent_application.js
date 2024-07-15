@@ -90,10 +90,12 @@ odoo.define("portal.agent_application", function (require) {
       _onChangeLicenseType: function (ev) {
         if (this.$(ev.target).val() == "other") {
           this.$("#div_license_type_other input").prop("required", true).show();
+          this.$("#div_license_type_other label").removeClass("label-optional");
         } else {
           this.$("#div_license_type_other input")
             .prop("required", false)
             .hide();
+          this.$("#div_license_type_other label").addClass("label-optional");
         }
       },
       _onChangeLicense: function (ev) {
@@ -109,9 +111,6 @@ odoo.define("portal.agent_application", function (require) {
 
         this.$("#div_previous_broker input").prop("required", isSelect);
         this.$("#div_previous_broker").toggle(isSelect);
-
-        this.$("#div_license_type_other input").prop("required", isSelect);
-        this.$("#div_license_type_other").toggle(isSelect);
 
         this.$("#div_has_NMLS_license select").prop("required", isSelect);
         this.$("#div_has_NMLS_license").toggle(isSelect);
@@ -273,10 +272,7 @@ odoo.define("portal.agent_application", function (require) {
           },
         }).then(function (data) {
           // placeholder phone_code
-          $("input[name='phone']").attr(
-            "placeholder",
-            data.phone_code !== 0 ? "+" + data.phone_code : ""
-          );
+          $("input[name='phone_code']").val(data.phone_code);
 
           // populate states and display
           const selectStates = $("select[name='state_id']");
@@ -372,6 +368,7 @@ odoo.define("portal.agent_application", function (require) {
           .find("input[required], select[required]")
           .each(function (index, elem) {
             if (!elem.checkValidity()) {
+              console.log("elem", elem);
               isValid = false;
               $(elem).addClass("is-invalid");
               return false;

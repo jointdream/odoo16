@@ -300,7 +300,7 @@ class CustomerPortal(Controller):
             'state_id': post.get('state_id'),
             'street': post.get('street'),
             'zip_code': post.get('zip_code'),
-            'phone': post.get('phone'),
+            'phone': post.get('phone_code') + post.get('phone'),
             'ssnid': post.get('ssnid'),
             'emergency_contact_name': post.get('emergency_contact_name'),
             'emergency_contact_phone': post.get('emergency_contact_phone'),

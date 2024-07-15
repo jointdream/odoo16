@@ -30,6 +30,7 @@ odoo.define("portal.agent_application", function (require) {
         "change #div_id_file_p2 input": "_onChangeCommonFile",
         "change #div_photo_file input": "_onChangeCommonFile",
         "change #div_working_languages input": "_onChangeWorkingLanguages",
+        "change .association_ids": "_onChangeAssociationSelect",
       }),
 
       /**
@@ -48,6 +49,12 @@ odoo.define("portal.agent_application", function (require) {
        */
       start() {
         const def = this._super(...arguments);
+
+        this.$(".association_ids").select2({
+          tokenSeparators: [",", " ", "_"],
+          maximumSelectionSize: 5,
+          allowClear: true,
+        });
 
         this._onChangeLicenseType({
           target: $("#div_license_type select")[0],
@@ -77,6 +84,13 @@ odoo.define("portal.agent_application", function (require) {
       },
       destroy() {
         this._super.apply(this, arguments);
+      },
+      _onChangeAssociationSelect: function (ev) {
+        if (ev.val && ev.val.length > 0) {
+          this.$("input[name=association_ids]").val(ev.val.join(","));
+        } else {
+          this.$("input[name=association_ids]").val("");
+        }
       },
       _onChangeCertificateType: function (ev) {
         if (this.$(ev.target).val() == "False") {

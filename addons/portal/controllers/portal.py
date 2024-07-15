@@ -290,6 +290,9 @@ class CustomerPortal(Controller):
         values.update(self._get_country_related_render_values(post, values))
         values.update({'record': agent_application})
 
+        associations = request.env['estate.cfg.agent.association'].sudo().search([])
+        values.update({'associations': associations})
+
         return request.render('portal.portal_agent_application', values)
 
     def _estate_app_entry_build_values(self, post, email):
@@ -343,6 +346,8 @@ class CustomerPortal(Controller):
             values['DRE_license_exp_date'] = datetime.strptime(post.get('DRE_license_exp_date'), "%Y-%m-%d").date()
         if post.get('language_ids'):
             values['language_ids'] = post.get('language_ids').split(',')
+        if post.get('association_ids'):
+            values['association_ids'] = post.get('association_ids')
         return values
 
     def _get_country_related_render_values(self, kw, render_values):

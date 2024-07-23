@@ -31,6 +31,8 @@ odoo.define("portal.agent_application", function (require) {
         "change #div_photo_file input": "_onChangeCommonFile",
         "change #div_working_languages input": "_onChangeWorkingLanguages",
         "change .association_ids": "_onChangeAssociationSelect",
+        "input #div_nick_name input": "_onChangeNickName",
+        "blur input[name='DRE_license_no']": "_onDREInputBlur",
       }),
 
       /**
@@ -43,6 +45,8 @@ odoo.define("portal.agent_application", function (require) {
         this._changeState = _.debounce(this._changeState.bind(this), 500);
 
         this.currentStep = 1;
+        this.DRELicenseNo = "";
+        this.nickName = "";
       },
       /**
        * @override
@@ -55,6 +59,9 @@ odoo.define("portal.agent_application", function (require) {
           maximumSelectionSize: 5,
           allowClear: true,
         });
+
+        this.defaultStateId =
+          this.$("input[name='default_state_id']").val() || 13;
 
         this._onChangeLicenseType({
           target: $("#div_license_type select")[0],
@@ -85,6 +92,112 @@ odoo.define("portal.agent_application", function (require) {
       destroy() {
         this._super.apply(this, arguments);
       },
+      _onDREInputBlur: function (ev) {
+        const value = this.$(ev.target).val();
+        if (!value || value.length == 0) {
+          $("#div_DRE_license_no input").addClass("is-invalid");
+          $("#div_DRE_license_no .err_msg")
+            .text("please enter DRE License No.")
+            .css("display", "block");
+          return;
+        }
+        if (value.trim().length != 8) {
+          $("#div_DRE_license_no input").addClass("is-invalid");
+          $("#div_DRE_license_no .err_msg")
+            .text("DRE License No. should be 8 characters.")
+            .css("display", "block");
+          return;
+        }
+
+        $("#div_DRE_license_no input").removeClass("is-invalid");
+        $("#div_DRE_license_no .err_msg").val("").css("display", "none");
+
+        if (value.trim() == this.DRELicenseNo) {
+          return;
+        }
+        this.DRELicenseNo = value.trim();
+
+        $("#div_DRE_license_no label i").css("display", "inline-block");
+        const self = this;
+        this._rpc({
+          route: "/agent/dre/search",
+          params: {
+            dre_license_no: value,
+          },
+        })
+          .then(function (result) {
+            $("#div_DRE_license_no label i").css("display", "none");
+            if (result.err_msg === "success") {
+              $("#div_DRE_license_no input").removeClass("is-invalid");
+
+              if (result["License Status"]) {
+                $("#div_DRE_license_no .err_msg")
+                  .text(`License Status:  ${result["License Status"]}`)
+                  .css("color", "grey")
+                  .css("display", "block");
+              } else {
+                $("#div_DRE_license_no .err_msg")
+                  .val("")
+                  .css("display", "none");
+              }
+
+              if (result["License Type"]) {
+                $("select[name='DRE_license_type']").val(
+                  result["License Type"].toLowerCase()
+                );
+              }
+              if (result["Expiration Date"]) {
+                const date = moment(
+                  result["Expiration Date"],
+                  "MM/DD/YY"
+                ).format("YYYY-MM-DD");
+                $("input[name='DRE_license_exp_date']").val(date);
+              }
+              if (result.NMLS_license_no && result.NMLS_license_no.length > 0) {
+                $("input[name='NMLS_license_no']").val(result.NMLS_license_no);
+                $("select[name='has_NMLS_license']").val("True");
+                self._onChangeBqLoanOfficers({
+                  target: $("#div_has_NMLS_license select")[0],
+                });
+              }
+              if (result["Former Responsible Broker"]) {
+                try {
+                  const formatBroker =
+                    result["Former Responsible Broker"].split(",");
+
+                  $("input[name='previous_broker']").val(
+                    formatBroker[2].trim()
+                  );
+                } catch (error) {
+                  $("input[name='previous_broker']").val("None");
+                }
+              } else {
+                $("input[name='previous_broker']").val("None");
+              }
+            } else {
+              $("#div_DRE_license_no input").addClass("is-invalid");
+              $("#div_DRE_license_no .err_msg")
+                .text(result.err_msg || "request error")
+                .css("display", "block");
+            }
+          })
+          .catch(function (error) {
+            console.error("request dre info error", error);
+            $("#div_DRE_license_no label i").css("display", "none");
+            $("#div_DRE_license_no input").addClass("is-invalid");
+            $("#div_DRE_license_no .err_msg")
+              .text(error.message || "request error")
+              .css("display", "block");
+          });
+      },
+      _onChangeNickName: function (ev) {
+        const value = this.$(ev.target).val();
+        if (value.indexOf(" ") >= 0) {
+          this.$("#div_nick_name input").val(this.nickName);
+          return;
+        }
+        this.nickName = value;
+      },
       _onChangeAssociationSelect: function (ev) {
         if (ev.val && ev.val.length > 0) {
           this.$("input[name=association_ids]").val(ev.val.join(","));
@@ -103,13 +216,15 @@ odoo.define("portal.agent_application", function (require) {
       },
       _onChangeLicenseType: function (ev) {
         if (this.$(ev.target).val() == "other") {
-          this.$("#div_license_type_other input").prop("required", true).show();
-          this.$("#div_license_type_other label").removeClass("label-optional");
+          this.$("input[name='DRE_license_type_other']")
+            .css("width", "40%")
+            .show();
+          this.$("select[name='DRE_license_type']").css("width", "60%");
         } else {
-          this.$("#div_license_type_other input")
-            .prop("required", false)
+          this.$("input[name='DRE_license_type_other']")
+            .css("width", "0px")
             .hide();
-          this.$("#div_license_type_other label").addClass("label-optional");
+          this.$("select[name='DRE_license_type']").css("width", "100%");
         }
       },
       _onChangeLicense: function (ev) {
@@ -132,6 +247,9 @@ odoo.define("portal.agent_application", function (require) {
         this.$("#div_nmls").toggle(isSelect);
 
         this.$("#div_driver_license_file input").prop("required", isSelect);
+
+        this.$("#div_association_ids select").prop("required", isSelect);
+        this.$("#div_association_ids").toggle(isSelect);
 
         const license_file_label = this.$("#div_driver_license_file label");
         if (isSelect) {
@@ -242,10 +360,10 @@ odoo.define("portal.agent_application", function (require) {
         this.currentStep = divId;
       },
       _onChangeOtherLicenseFile: function (ev) {
-        this._validUploadFiles(ev, 3 * 1024 * 1024, 5);
+        this._validUploadFiles(ev, 2 * 1024 * 1024, 5);
       },
       _onChangeCommonFile: function (ev) {
-        this._validUploadFiles(ev, 3 * 1024 * 1024);
+        this._validUploadFiles(ev, 2 * 1024 * 1024);
       },
       _onChangeWorkingLanguages: function (ev) {
         const selectedValues = [];
@@ -302,6 +420,9 @@ odoo.define("portal.agent_application", function (require) {
                   .text(x[1])
                   .attr("value", x[0])
                   .attr("data-code", x[2]);
+                if (x[0] == self.defaultStateId) {
+                  opt.attr("selected", "selected");
+                }
                 selectStates.append(opt);
               });
               selectStates.parent("div").show();
@@ -316,13 +437,6 @@ odoo.define("portal.agent_application", function (require) {
 
           // manage fields order / visibility
           if (data.fields) {
-            if (
-              $.inArray("zipcode", data.fields) > $.inArray("city", data.fields)
-            ) {
-              $(".div_zip").before($(".div_city"));
-            } else {
-              $(".div_zip").after($(".div_city"));
-            }
             const all_fields = ["street", "zipcode", "city", "country_name"]; // "state_code"];
             _.each(all_fields, function (field) {
               $(".checkout_autoformat .div_" + field.split("_")[0]).toggle(
@@ -362,9 +476,8 @@ odoo.define("portal.agent_application", function (require) {
           if (data.length) {
             selectCities.html("");
             _.each(data, function (city) {
-              selectCities.append(
-                $("<option>").text(city[1]).attr("value", city[0])
-              );
+              const item = $("<option>").text(city[1]).attr("value", city[0]);
+              selectCities.append(item);
             });
             selectCities.parent("div").show();
           } else {
@@ -382,7 +495,7 @@ odoo.define("portal.agent_application", function (require) {
           .find("input[required], select[required]")
           .each(function (index, elem) {
             if (!elem.checkValidity()) {
-              console.log("elem", elem);
+              console.log("invalid", elem);
               isValid = false;
               $(elem).addClass("is-invalid");
               return false;

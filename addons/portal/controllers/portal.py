@@ -6,15 +6,19 @@ import json
 import math
 import re
 
+import requests
 from werkzeug import urls
+from bs4 import BeautifulSoup
 
 from odoo import http, tools, _, SUPERUSER_ID
 from odoo.exceptions import AccessDenied, AccessError, MissingError, UserError, ValidationError
 from odoo.http import content_disposition, Controller, request, route
 from odoo.tools import consteq
-from odoo.osv import expression
 
 from datetime import datetime
+
+BQ_DRE_URL = 'https://www2.dre.ca.gov/PublicASP/pplinfo.asp?License_id={BQ_DRE}'
+
 
 # --------------------------------------------------
 # Misc tools
@@ -262,6 +266,52 @@ class CustomerPortal(Controller):
         agent_application.action_cancel()
         return request.redirect('/my/home')
 
+    @route('/agent/dre/search', type='json', auth="user", website=True)
+    def agent_dre_search(self, **post):
+        detail = {'err_msg': 'success'}
+        if not post.get('dre_license_no'):
+            detail.update({'err_msg': 'DRE license number is required.'})
+            return detail
+
+        url = BQ_DRE_URL.format(BQ_DRE=post.get('dre_license_no'))
+        response = requests.get(url)
+        if response.status_code == 200:
+            if response.content.find(b'No matching public record was found for License ID') != -1:
+                detail.update({'err_msg': 'No matching public record was found for License ID.'})
+            else:
+                detail.update(self._request_dre_details(response.content))
+        else:
+            detail.update({'err_msg': 'Failed to search DRE license number.'})
+        return detail
+
+    def _request_dre_details(self, content):
+        details = {}
+        soup = BeautifulSoup(content, "html.parser")
+        table = soup.find_all('table')
+        for i, row in enumerate(table[0].find_all('tr')):
+
+            r = row.find_all('td')
+            key = r[0].text.strip(":").strip()
+
+            if len(r) > 2:
+                raise
+            text = r[1:][0].get_text(separator=', ', strip=True)
+
+            # 第一列为空，跟上一行合并
+            if key == "":
+                if isinstance(details[last_r_name], list):
+                    details[last_r_name].append(text)
+                else:
+                    details[last_r_name] = [text]
+            elif "MLO License Endorsement" in key:
+                match = re.match(r'^\d+', text)
+                if match:
+                    details["NMLS_license_no"] = match.group()
+            else:
+                details[key] = text
+                last_r_name = key
+        return details
+
     @route('/agent/application', type='http', auth='user', website=True, methods=['GET', 'POST'], csrf=False)
     def agent_application(self, **post):
         """申请成为经纪人表单渲染及提交"""
@@ -297,6 +347,8 @@ class CustomerPortal(Controller):
 
     def _estate_app_entry_build_values(self, post, email):
         values = {
+            'target_roles': [1],
+            'state': 'under_review',
             'email': email,
             'nick_name': post.get('nick_name'),
             'country_id': post.get('country_id'),
@@ -347,7 +399,7 @@ class CustomerPortal(Controller):
         if post.get('language_ids'):
             values['language_ids'] = post.get('language_ids').split(',')
         if post.get('association_ids'):
-            values['association_ids'] = post.get('association_ids')
+            values['association_ids'] = [association_id for association_id in post.get('association_ids').split(',')]
         return values
 
     def _get_country_related_render_values(self, kw, render_values):

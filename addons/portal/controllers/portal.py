@@ -15,10 +15,6 @@ from odoo.exceptions import AccessDenied, AccessError, MissingError, UserError, 
 from odoo.http import content_disposition, Controller, request, route
 from odoo.tools import consteq
 
-from datetime import datetime
-
-BQ_DRE_URL = 'https://www2.dre.ca.gov/PublicASP/pplinfo.asp?License_id={BQ_DRE}'
-
 
 # --------------------------------------------------
 # Misc tools
@@ -177,13 +173,6 @@ class CustomerPortal(Controller):
     @route(['/my', '/my/home'], type='http', auth="user", website=True)
     def home(self, **kw):
         values = self._prepare_portal_layout_values()
-        user_is_internal = request.env.user._is_internal()
-
-        agent_application = None
-        if not user_is_internal:
-            agent_application = self._get_agent_application(request.env.user.partner_id.id)
-
-        values.update({'user_is_internal': user_is_internal, 'agent_application': agent_application})
         return request.render("portal.portal_my_home", values)
 
     @route(['/my/account'], type='http', auth='user', website=True)
@@ -254,177 +243,6 @@ class CustomerPortal(Controller):
             'Content-Security-Policy': "frame-ancestors 'self'"
         })
 
-    @route('/agent/application/<int:applicant_id>/cancel', type='http', auth='user', website=True, methods=['POST'])
-    def agent_application_cancel(self, applicant_id, **post):
-        if not applicant_id:
-            return request.redirect('/my/home')
-        
-        agent_application = self._get_agent_application(applicant_id)
-        if not agent_application:
-            return request.redirect('/my/home')
-        
-        agent_application.action_cancel()
-        return request.redirect('/my/home')
-
-    @route('/agent/dre/search', type='json', auth="user", website=True)
-    def agent_dre_search(self, **post):
-        detail = {'err_msg': 'success'}
-        if not post.get('dre_license_no'):
-            detail.update({'err_msg': 'DRE license number is required.'})
-            return detail
-
-        url = BQ_DRE_URL.format(BQ_DRE=post.get('dre_license_no'))
-        response = requests.get(url)
-        if response.status_code == 200:
-            if response.content.find(b'No matching public record was found for License ID') != -1:
-                detail.update({'err_msg': 'No matching public record was found for License ID.'})
-            else:
-                detail.update(self._request_dre_details(response.content))
-        else:
-            detail.update({'err_msg': 'Failed to search DRE license number.'})
-        return detail
-
-    def _request_dre_details(self, content):
-        details = {}
-        soup = BeautifulSoup(content, "html.parser")
-        table = soup.find_all('table')
-        for i, row in enumerate(table[0].find_all('tr')):
-
-            r = row.find_all('td')
-            key = r[0].text.strip(":").strip()
-
-            if len(r) > 2:
-                raise
-            text = r[1:][0].get_text(separator=', ', strip=True)
-
-            # 第一列为空，跟上一行合并
-            if key == "":
-                if isinstance(details[last_r_name], list):
-                    details[last_r_name].append(text)
-                else:
-                    details[last_r_name] = [text]
-            elif "MLO License Endorsement" in key:
-                match = re.match(r'^\d+', text)
-                if match:
-                    details["NMLS_license_no"] = match.group()
-            else:
-                details[key] = text
-                last_r_name = key
-        return details
-
-    @route('/agent/application', type='http', auth='user', website=True, methods=['GET', 'POST'], csrf=False)
-    def agent_application(self, **post):
-        """申请成为经纪人表单渲染及提交"""
-        user_is_internal = request.env.user._is_internal()
-        if user_is_internal:
-            return request.redirect('/my/home')
-        
-        agent_application = self._get_agent_application(request.env.user.partner_id.id)
-        if agent_application and (agent_application.state in ['under_review', 'approved']):
-            return request.redirect('/my/home')
-        
-        # 提交表单
-        if request.httprequest.method == 'POST':
-            # todo: validate the form
-            email = request.env.user.email
-            app_entry = self._estate_app_entry_build_values(post, email)
-            res = request.env['estate.app.entry'].sudo().create(app_entry)
-            res.action_submit()
-            return request.redirect('/my/home')
-        
-        values = self._prepare_portal_layout_values()
-
-        languages = request.env['estate.cfg.agent.working.language'].sudo().search([])
-        values.update({'error': dict(), 'working_languages': languages})
-        
-        values.update(self._get_country_related_render_values(post, values))
-        values.update({'record': agent_application})
-
-        associations = request.env['estate.cfg.agent.association'].sudo().search([])
-        values.update({'associations': associations})
-
-        return request.render('portal.portal_agent_application', values)
-
-    def _estate_app_entry_build_values(self, post, email):
-        values = {
-            'target_roles': [1],
-            'state': 'under_review',
-            'email': email,
-            'nick_name': post.get('nick_name'),
-            'country_id': post.get('country_id'),
-            'state_id': post.get('state_id'),
-            'street': post.get('street'),
-            'zip_code': post.get('zip_code'),
-            'phone': post.get('phone_code') + post.get('phone'),
-            'ssnid': post.get('ssnid'),
-            'emergency_contact_name': post.get('emergency_contact_name'),
-            'emergency_contact_phone': post.get('emergency_contact_phone'),
-            'website': post.get('website'),
-            'has_driver_license': post.get('has_driver_license') == 'True',
-            'other_license_type': post.get('other_license_type'),
-            'driver_license_no': post.get('driver_license_no'),
-            'driver_license_exp_date': datetime.strptime(post.get('driver_license_exp_date'), "%Y-%m-%d").date(),
-            'birthday': datetime.strptime(post.get('birthday'), "%Y-%m-%d").date(),
-            'w9_type': post.get('w9_type'),
-            'business_name': post.get('business_name'),
-            'ein': post.get('ein'),
-            'business_addr': post.get('business_addr'),
-            'federal_tax_type': post.get('federal_tax_type'),
-            'previous_broker': post.get('previous_broker'),
-            'federal_tax_type_other': post.get('federal_tax_type_other'),
-            'agent_is_currently_licensed': post.get('agent_is_currently_licensed') == 'True',
-            'has_DRE_license': post.get('agent_is_currently_licensed') == 'True',
-            'is_from_bq_license_school': post.get('is_from_bq_license_school') == 'True',
-            'DRE_license_type': post.get('DRE_license_type'),
-            'DRE_license_type_other': post.get('DRE_license_type_other'),
-            'DRE_license_no': post.get('DRE_license_no'),
-            'has_NMLS_license': post.get('has_NMLS_license') == 'True',
-            'NMLS_license_no': post.get('NMLS_license_no'),
-            'w9_file': base64.b64encode(post.get('w9_file').read()),
-        }
-        if post.get('driver_license_file'):
-            values['driver_license_file'] = base64.b64encode(post.get('driver_license_file').read())
-        if post.get('id_file_p1'):
-            values['id_file_p1'] = base64.b64encode(post.get('id_file_p1').read())
-        if post.get('id_file_p2'):
-            values['id_file_p2'] = base64.b64encode(post.get('id_file_p2').read())
-        if post.get('photo_file'):
-            values['photo_file'] = base64.b64encode(post.get('photo_file').read())
-        if post.get('other_license_file'):
-            values['other_license_file'] = base64.b64encode(post.get('other_license_file').read())
-        if post.get("city_id"):
-            values["city_id"] = int(post.get("city_id"))
-        if post.get('DRE_license_exp_date'):
-            values['DRE_license_exp_date'] = datetime.strptime(post.get('DRE_license_exp_date'), "%Y-%m-%d").date()
-        if post.get('language_ids'):
-            values['language_ids'] = post.get('language_ids').split(',')
-        if post.get('association_ids'):
-            values['association_ids'] = [association_id for association_id in post.get('association_ids').split(',')]
-        return values
-
-    def _get_country_related_render_values(self, kw, render_values):
-        '''
-        This method provides fields related to the country to render the website sale form
-        '''
-        country_code = request.geoip.get('country_code')
-        if country_code:
-            country = request.env['res.country'].search([('code', '=', country_code)], limit=1)
-        else:
-            country = request.website.user_id.sudo().country_id
-
-        res = {
-            'country': country,
-            'country_states': country.get_website_sale_states(mode="new"),
-            'countries': country.get_website_sale_countries(mode="new"),
-        }
-        return res
-
-    def _get_agent_application(self, user_id):
-        dom = [
-            ('applicant_id', '=', user_id),
-            ('category_id.acronym', '=', 'entry'),
-        ]
-        return request.env['estate.app.entry'].sudo().search(dom, limit=1, order='id desc')
 
     def _update_password(self, old, new1, new2):
         for k, v in [('old', old), ('new1', new1), ('new2', new2)]:

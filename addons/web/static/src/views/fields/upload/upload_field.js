@@ -91,10 +91,12 @@ export class UploadField extends Component {
   }
 
   get fileName() {
-    return (this.state.fileName || this.props.value || "").slice(
-      0,
-      toBase64Length(MAX_FILENAME_SIZE_BYTES)
-    );
+    return (
+      this.state.fileName ||
+      this.props.fileNameField ||
+      this.props.value ||
+      ""
+    ).slice(0, toBase64Length(MAX_FILENAME_SIZE_BYTES));
   }
 
   get fileMineType() {
